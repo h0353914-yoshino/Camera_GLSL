@@ -123,11 +123,20 @@ class LifterM(R.LifterR):
         _o = lift_alfort.records(data, section, 3)
         self.outinfo = tuple(words(data, _o[0] + 0x50, 12))
         self.out_half = (self.outinfo[2] == 1 or self.outinfo[0] == 0xe0000000) if out_half is None else out_half
+        self.out_uint = self.outinfo[4] == 5 and self.outinfo[0] == 0x80000000
         self.prefetch = [tuple(words(data, a, 12)) for a in lift_alfort.records(data, section, 34)]
         self.es3 = False; self.declared_all = set()
 
     def const(self, idx, kind='c'):
         v = R.LifterR.const(self, idx, kind)
+        if getattr(self, 'int_ctx', False):
+            raw = self.constants.get(idx, '')
+            m = re.fullmatch(r'uintBitsToFloat\(0x([0-9a-f]+)u\)', raw)
+            if m:
+                n = int(m[1], 16)
+                if n >= 1 << 31:
+                    n -= 1 << 32
+                return f'({n}.0)' if n < 0 else f'{n}.0'
         base = re.match(r'(\w+)', v)
         if base and base[1] in self.utypes and not v.startswith('uintBits'):
             t = self.utypes[base[1]][0]
@@ -194,7 +203,17 @@ class LifterM(R.LifterR):
             return expr
         return R.LifterR.src(self, tok, lane)
 
+    INT_OPS = ('add.s', 'sub.s', 'min.s', 'max.s', 'min.u', 'max.u', 'mull.u', 'madsh.', 'shl.b', 'shr.b', 'ashr.b', 'and.b', 'or.b', 'xor.b', 'not.b',
+               'cmps.s.', 'cmps.u.', 'sel.s32', 'sel.s16', 'absneg.s', 'mul.s24', 'cov.s32f32', 'cov.u32f32', 'cov.s16f16', 'cov.u16f16', 'mov.s32s32', 'mov.s16s16', 'mov.u32u32')
+
     def emit_ins(self, pc, out, ind):
+        self.int_ctx = self.ins[pc][1].startswith(self.INT_OPS)
+        try:
+            return self._emit_ins(pc, out, ind)
+        finally:
+            self.int_ctx = False
+
+    def _emit_ins(self, pc, out, ind):
         flags, op, rest = self.ins[pc]
         pad = '    ' * ind
         if op == 'bary.f':
@@ -285,7 +304,7 @@ class LifterM(R.LifterR):
         decl = [f'    {"mediump" if k == "hr" else "highp"} float {n};' for k, n in sorted(self.used)]
         if self.uses_a0:
             decl.append('    highp float a0_x;')
-        self.es3 = any(t[0] in 'iu' for t, _ in self.utypes.values() if t != 'mat2') or any(t in ('isampler2D', 'usampler2D') for t in self.stypes.values()) or not self.out_half or any(o in ('and.b', 'or.b', 'xor.b', 'not.b') for _, o, _ in self.ins) or getattr(self, 'force_es3', False)
+        self.es3 = any(t[0] in 'iu' for t, _ in self.utypes.values() if t != 'mat2') or any(t in ('isampler2D', 'usampler2D') for t in self.stypes.values()) or not self.out_half or any(o in ('and.b', 'or.b', 'xor.b', 'not.b') for _, o, _ in self.ins) or getattr(self, 'force_es3', False) or self.out_uint
         head = ['#version 300 es' if self.es3 else '#version 100', 'precision highp float;', '']
         if self.es3: head.insert(1, 'precision highp int;')
         if any(t == 'samplerExternalOES' for t in self.stypes.values()):
@@ -296,7 +315,7 @@ class LifterM(R.LifterR):
                 continue
             p = 'mediump' if self.uni_kind.get(n) == {'hc'} else 'highp'
             head.append(f'uniform {p} {t} {n}' + (f'[{sz}];' if sz > 1 else ';'))
-        head += [(f'in highp {"vec2" if self.max_bary <= 2 else "vec4"} texCoord;' if self.es3 else f'varying highp {"vec2" if self.max_bary <= 2 else "vec4"} texCoord;')] + ([f'out {"mediump" if self.out_half else "highp"} vec4 fragColor;'] if self.es3 else []) + ['']
+        head += [(f'in highp {"vec2" if self.max_bary <= 2 else "vec4"} texCoord;' if self.es3 else f'varying highp {"vec2" if self.max_bary <= 2 else "vec4"} texCoord;')] + ([f'out {"mediump" if self.out_half else "highp"} {"uvec4" if self.out_uint else "vec4"} fragColor;'] if self.es3 else []) + ['']
         if any(o == 'rndne.f' for _, o, _ in self.ins):
             head += ['float rndne(float x)', '{', '    float f = floor(x + 0.5);', '    return (f - x == 0.5 && mod(f, 2.0) != 0.0) ? f - 1.0 : f;', '}', '']
         head += ['void main()', '{', '    bool p0;', '    bool p1;']
@@ -304,7 +323,7 @@ class LifterM(R.LifterR):
         head += decl
         head += [f'    {n};' for n, _ in sorted(self.uorder.items(), key=lambda kv: kv[1]) if n in self.uniforms]
         head += body
-        head += [f'    {"fragColor" if self.es3 else "gl_FragColor"} = vec4({oreg[0]}, {oreg[1]}, {oreg[2]}, {oreg[3]});', '}', '']
+        head += [f'    {"fragColor" if self.es3 else "gl_FragColor"} = {"uvec4" if self.out_uint else "vec4"}({", ".join((f"uint({r})" if self.out_uint else r) for r in oreg)});', '}', '']
         text = '\n'.join(head)
         if self.es3:
             text = text.replace('texture2D(', 'texture(')

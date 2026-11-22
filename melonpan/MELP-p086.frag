@@ -13,7 +13,7 @@ uniform highp vec4 offset;
 uniform highp vec2 tarPixSize;
 uniform highp vec2 refPixSize;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 void main()
 {
@@ -300,5 +300,5 @@ void main()
     r0_y = float(int(r1_y));
     r0_z = float(int(r2_x));
     r0_w = float(int(r12_x));
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

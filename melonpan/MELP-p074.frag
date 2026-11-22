@@ -9,7 +9,7 @@ uniform highp vec4 params;
 uniform highp vec2 sadPixSize;
 uniform highp vec2 btmMaskPixSize;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 void main()
 {
@@ -703,5 +703,5 @@ void main()
         }
         if (blk < 0) break;
     }
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

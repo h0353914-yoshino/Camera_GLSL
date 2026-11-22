@@ -86,9 +86,9 @@ void main()
     r0_x = r3_w + 0.0;
     r0_y = r0_x * sadPixSize.y;
     r0_x = floor(r0_z / exp2(31.0));
-    r0_x = float(int(r0_x) & int(4.59163468e-41));
+    r0_x = float(int(r0_x) & int(32767.0));
     r0_x = r0_x + r0_z;
-    r0_x = float(int(r0_x) & int(0.0));
+    r0_x = float(int(r0_x) & int((-32768.0)));
     r0_x = r0_z - r0_x;
     r0_z = (r0_x < 0.0) ? 1.0 : 0.0;
     r0_w = (-r0_x);
@@ -207,9 +207,9 @@ void main()
             r0_x = r0_x * r0_z;
             r0_x = r0_x * 256.0;
             r0_x = float(int(r0_x));
-            r0_z = float(int(r0_x) & int(-4.34402524e-44));
+            r0_z = float(int(r0_x) & int((-2147483617.0)));
             r0_w = r0_x + 32.0;
-            r0_z = (r0_z == -0.0) ? 1.0 : 0.0;
+            r0_z = (r0_z == (-2147483648.0)) ? 1.0 : 0.0;
             r0_x = (r0_z != 0.0) ? r0_x : r0_w;
             r0_x = floor(r0_x / exp2(6.0));
             r0_x = max(r0_x, -2.0);
@@ -264,9 +264,9 @@ void main()
             r0_x = r0_x * r0_y;
             r0_x = r0_x * 256.0;
             r0_x = float(int(r0_x));
-            r0_y = float(int(r0_x) & int(-4.34402524e-44));
+            r0_y = float(int(r0_x) & int((-2147483617.0)));
             r0_z = r0_x + 32.0;
-            r0_y = (r0_y == -0.0) ? 1.0 : 0.0;
+            r0_y = (r0_y == (-2147483648.0)) ? 1.0 : 0.0;
             r0_x = (r0_y != 0.0) ? r0_x : r0_z;
             r0_x = floor(r0_x / exp2(6.0));
             r0_x = max(r0_x, -2.0);
@@ -277,7 +277,7 @@ void main()
     r0_y = r3_w + 1.0;
     r0_z = r4_w + 2.0;
     r0_w = r2_y + 2.0;
-    r0_x = float(int(r0_x) & int(4.59163468e-41));
+    r0_x = float(int(r0_x) & int(32767.0));
     r0_y = r0_y + 0.0;
     r0_z = r0_z;
     r1_y = r0_w;
@@ -286,7 +286,7 @@ void main()
     r3_w = 0.0;
     r0_x = r0_z * 0.003921568859368563;
     r0_y = r1_y * 0.003921568859368563;
-    r0_z = float(int(r1_z) & int(0.0));
+    r0_z = float(int(r1_z) & int((-32768.0)));
     r0_z = r1_x - r0_z;
     r2_x = (r0_z < 0.0) ? 1.0 : 0.0;
     r1_x = (-r0_z);
@@ -404,9 +404,9 @@ void main()
             r0_z = r0_z * r1_x;
             r0_z = r0_z * 256.0;
             r0_z = float(int(r0_z));
-            r1_x = float(int(r0_z) & int(-4.34402524e-44));
+            r1_x = float(int(r0_z) & int((-2147483617.0)));
             r1_y = r0_z + 32.0;
-            r1_x = (r1_x == -0.0) ? 1.0 : 0.0;
+            r1_x = (r1_x == (-2147483648.0)) ? 1.0 : 0.0;
             r0_z = (r1_x != 0.0) ? r0_z : r1_y;
             r0_z = floor(r0_z / exp2(6.0));
             r0_z = max(r0_z, -2.0);
@@ -458,9 +458,9 @@ void main()
             r0_z = r0_z * r0_w;
             r0_z = r0_z * 256.0;
             r0_z = float(int(r0_z));
-            r0_w = float(int(r0_z) & int(-4.34402524e-44));
+            r0_w = float(int(r0_z) & int((-2147483617.0)));
             r1_x = r0_z + 32.0;
-            r0_w = (r0_w == -0.0) ? 1.0 : 0.0;
+            r0_w = (r0_w == (-2147483648.0)) ? 1.0 : 0.0;
             r0_z = (r0_w != 0.0) ? r0_z : r1_x;
             r0_z = floor(r0_z / exp2(6.0));
             r0_z = max(r0_z, -2.0);

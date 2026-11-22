@@ -12,18 +12,18 @@ def run(names,tag,order_of=None,out_of=None):
     gen={}; fail={}
     for n in names:
         try:
-            L=M.LifterM(n,order=(order_of or {}).get(n),out_half=(out_of or {}).get(n)); fs=L.generate(); gen[n]=(L.vertex(),fs,L.es3)
+            L=M.LifterM(n,order=(order_of or {}).get(n),out_half=(out_of or {}).get(n)); fs=L.generate(); gen[n]=(L.vertex(),fs,L.es3,L.out_uint)
         except Exception as e: fail[n]=(type(e).__name__+': '+str(e))[:90]
     res={}
     for es3 in (False,True):
-        pairs=[(n,v,f) for n,(v,f,e) in gen.items() if e==es3]
+        pairs=[(n,v,f) for n,(v,f,e,u) in gen.items() if e==es3]
         if not pairs: continue
         for i in range(0,len(pairs),60):
             r,log=compile_batch(pairs[i:i+60],'3' if es3 else '2'); res.update(r)
     items=[]
     for n in gen:
         if n in res:
-            p=f'{ROOT}/pixtmp/{n}.bin'; os.makedirs(f'{ROOT}/pixtmp',exist_ok=True); open(p,'wb').write(res[n]); items.append((n,origbin(n),p))
+            p=f'{ROOT}/pixtmp/{n}.bin'; os.makedirs(f'{ROOT}/pixtmp',exist_ok=True); open(p,'wb').write(res[n]); items.append((n,origbin(n),p,'u' if gen[n][3] else ''))
     pr={}
     for i in range(0,len(items),80):
         r,out=pixg.compare(items[i:i+80],3); pr.update(r)

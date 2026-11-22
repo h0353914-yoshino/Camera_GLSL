@@ -5,7 +5,7 @@ precision highp float;
 uniform highp sampler2D texImage;
 uniform highp usampler2D estImage;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 float rndne(float x)
 {
@@ -45,10 +45,10 @@ void main()
     r1_x = samplePF1.z;
     r1_y = samplePF1.w;
     r63_x = texCoord.x;
-    r0_x = r0_z + 0.0;
-    r0_y = r0_w + 0.0;
-    r0_z = r1_x + 0.0;
-    r0_w = r1_y + 0.0;
+    r0_x = r0_z - 32768.0;
+    r0_y = r0_w - 32768.0;
+    r0_z = r1_x - 32768.0;
+    r0_w = r1_y - 32768.0;
     r0_x = r0_x;
     r0_y = r0_y;
     r0_z = r0_z;
@@ -85,5 +85,5 @@ void main()
     r0_y = hr0_y;
     r0_z = hr0_z;
     r0_w = hr0_w;
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

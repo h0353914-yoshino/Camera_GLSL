@@ -7,7 +7,7 @@ uniform highp vec4 drOffset;
 uniform highp vec4 levelOffset;
 uniform highp vec4 params;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 void main()
 {
@@ -109,9 +109,9 @@ void main()
     r0_y = r0_y + r1_y;
     r0_z = r0_z + r1_z;
     r0_w = r0_w + r1_w;
-    r0_x = min(r0_x, 9.18340949e-41);
-    r0_y = min(r0_y, 9.18340949e-41);
-    r0_z = min(r0_z, 9.18340949e-41);
-    r0_w = min(r0_w, 9.18340949e-41);
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    r0_x = min(r0_x, 65535.0);
+    r0_y = min(r0_y, 65535.0);
+    r0_z = min(r0_z, 65535.0);
+    r0_w = min(r0_w, 65535.0);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

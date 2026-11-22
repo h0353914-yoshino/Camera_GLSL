@@ -302,8 +302,9 @@ melonpan-MELP-p082	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p082.frag
 melonpan-MELP-p083	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p083.frag
 melonpan-MELP-p084	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p084.frag
 melonpan-MELP-p085	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p085.frag
+melonpan-MELP-p086	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p086.frag
 melonpan-MELP-p087	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p087.frag
-melonpan-MELP-p089	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p089.frag
+melonpan-MELP-p088	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p088.frag
 melonpan-MELP-p009	gles2	melonpan/vertex_68e462c8.vert	melonpan/MELP-p009.frag
 melonpan-MELP-p090	gles2	melonpan/vertex_68e462c8.vert	melonpan/MELP-p090.frag
 melonpan-MELP-p091	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p091.frag
@@ -344,9 +345,11 @@ mugichoco-MGC-p007	gles2	mugichoco/vertex_68e462c8.vert	mugichoco/MGC-p007.frag
 mugichoco-MGC-p008	gles3	mugichoco/vertex_314750c9.vert	mugichoco/MGC-p008.frag
 mugichoco-MGC-p009	gles2	mugichoco/vertex_68e462c8.vert	mugichoco/MGC-p009.frag
 spica-SPCA-p001	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p001.frag
+spica-SPCA-p010	gles3	spica/vertex_314750c9.vert	spica/SPCA-p010.frag
 spica-SPCA-p011	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p011.frag
 spica-SPCA-p012	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p012.frag
 spica-SPCA-p013	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p013.frag
+spica-SPCA-p014	gles3	spica/vertex_314750c9.vert	spica/SPCA-p014.frag
 spica-SPCA-p015	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p015.frag
 spica-SPCA-p016	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p016.frag
 spica-SPCA-p017	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p017.frag

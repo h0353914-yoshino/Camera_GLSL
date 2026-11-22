@@ -654,7 +654,7 @@ void main()
     r0_z = r0_z * 255.0;
     r1_w = float(m_EpLPFA);
     r0_y = r0_y + r1_x;
-    r1_x = 2.04071095e-41 * r0_x;
+    r1_x = 14563.0 * r0_x;
     r0_z = float(int(r0_z));
     r1_x = r1_x;
     r0_y = float(int(r0_y));
@@ -798,7 +798,7 @@ void main()
     r0_z = r0_z;
     r0_x = r0_z;
     r0_x = floor(r0_x / exp2(10.0));
-    r0_x = min(4.59163468e-41, r0_x);
+    r0_x = min(32767.0, r0_x);
     r0_x = floor(r0_x / exp2(7.0));
     r0_x = r0_x;
     r0_x = r0_x * 0.003921568859368563;

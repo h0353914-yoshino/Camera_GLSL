@@ -6,7 +6,7 @@ uniform highp usampler2D volCoef;
 uniform highp vec2 pixSize;
 uniform highp vec4 vol;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 float rndne(float x)
 {
@@ -113,5 +113,5 @@ void main()
     r0_y = float(int(r0_y));
     r0_z = float(int(r0_z));
     r0_w = float(int(r0_w));
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

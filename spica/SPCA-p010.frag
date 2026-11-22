@@ -47,10 +47,10 @@ void main()
     r1_x = samplePF1.z;
     r1_y = samplePF1.w;
     r63_x = texCoord.x;
-    r0_x = r0_z + 0.0;
-    r0_y = r0_w + 0.0;
-    r0_z = r1_x + 0.0;
-    r0_w = r1_y + 0.0;
+    r0_x = r0_z - 32768.0;
+    r0_y = r0_w - 32768.0;
+    r0_z = r1_x - 32768.0;
+    r0_w = r1_y - 32768.0;
     r0_x = r0_x;
     r0_y = r0_y;
     r0_z = r0_z;

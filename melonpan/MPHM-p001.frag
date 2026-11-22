@@ -488,8 +488,8 @@ void main()
             r3_z = r3_z + r4_z;
             r3_w = r3_w + r12_x;
             r4_x = floor(r12_y / exp2(31.0));
-            r3_z = float(int(r3_z) & int(0.0));
-            r4_w = float(int(r3_w) & int(0.0));
+            r3_z = float(int(r3_z) & int(2147483646.0));
+            r4_w = float(int(r3_w) & int(2147483646.0));
             r5_x = floor(r12_z / exp2(31.0));
             r5_y = r4_x + r12_y;
             r6_x = r4_z - r3_z;
@@ -499,13 +499,13 @@ void main()
             r4_x = sample243.z;
             r4_y = sample243.w;
             r0_x = r12_x - r4_w;
-            r0_y = float(int(r5_y) & int(0.0));
+            r0_y = float(int(r5_y) & int(2147483646.0));
             r4_w = r6_x * exp2(1.0);
             r5_x = r5_x + r12_z;
             r0_x = r0_x * exp2(1.0);
             r0_y = r12_y - r0_y;
             r4_w = float(int(r4_w) | int(1.0));
-            r5_x = float(int(r5_x) & int(0.0));
+            r5_x = float(int(r5_x) & int(2147483646.0));
             r0_x = float(int(r0_x) | int(1.0));
             r0_y = r0_y * exp2(1.0);
             hr0_x = r4_w;
@@ -779,7 +779,7 @@ void main()
             r1_y = r14_z - r1_y;
             r2_y = float(int(r2_y) & int(3.0));
             r1_x = float(int(r1_x) & (~int(3.0)));
-            r2_z = min(9.18340949e-41, r15_w);
+            r2_z = min(65535.0, r15_w);
             hr0_x = r1_y;
             r1_y = r2_y + r13_z;
             r2_y = (a0_x == 0.0 ? r4_z : (a0_x == 1.0 ? r4_w : (a0_x == 2.0 ? r5_x : (a0_x == 3.0 ? r5_y : (a0_x == 4.0 ? r5_z : (a0_x == 5.0 ? r5_w : (a0_x == 6.0 ? r6_x : (a0_x == 7.0 ? r6_y : (a0_x == 8.0 ? r6_z : (a0_x == 9.0 ? r6_w : (a0_x == 10.0 ? r7_x : (a0_x == 11.0 ? r7_y : (a0_x == 12.0 ? r7_z : (a0_x == 13.0 ? r7_w : (a0_x == 14.0 ? r8_x : (a0_x == 15.0 ? r8_y : 0.0))))))))))))))));
@@ -1047,7 +1047,7 @@ void main()
             r1_y = r13_w - r1_y;
             r2_y = float(int(r2_y) & int(3.0));
             r1_x = float(int(r1_x) & (~int(3.0)));
-            r2_z = min(9.18340949e-41, r15_x);
+            r2_z = min(65535.0, r15_x);
             hr0_x = r1_y;
             r1_y = r2_y + r9_z;
             r2_y = (a0_x == 0.0 ? r4_z : (a0_x == 1.0 ? r4_w : (a0_x == 2.0 ? r5_x : (a0_x == 3.0 ? r5_y : (a0_x == 4.0 ? r5_z : (a0_x == 5.0 ? r5_w : (a0_x == 6.0 ? r6_x : (a0_x == 7.0 ? r6_y : (a0_x == 8.0 ? r6_z : (a0_x == 9.0 ? r6_w : (a0_x == 10.0 ? r7_x : (a0_x == 11.0 ? r7_y : (a0_x == 12.0 ? r7_z : (a0_x == 13.0 ? r7_w : (a0_x == 14.0 ? r8_x : (a0_x == 15.0 ? r8_y : 0.0))))))))))))))));
@@ -1315,7 +1315,7 @@ void main()
             r1_y = r12_x - r1_y;
             r2_y = float(int(r2_y) & int(3.0));
             r1_x = float(int(r1_x) & (~int(3.0)));
-            r2_z = min(9.18340949e-41, r14_y);
+            r2_z = min(65535.0, r14_y);
             hr0_x = r1_y;
             r1_y = r2_y + r10_y;
             r2_y = (a0_x == 0.0 ? r4_z : (a0_x == 1.0 ? r4_w : (a0_x == 2.0 ? r5_x : (a0_x == 3.0 ? r5_y : (a0_x == 4.0 ? r5_z : (a0_x == 5.0 ? r5_w : (a0_x == 6.0 ? r6_x : (a0_x == 7.0 ? r6_y : (a0_x == 8.0 ? r6_z : (a0_x == 9.0 ? r6_w : (a0_x == 10.0 ? r7_x : (a0_x == 11.0 ? r7_y : (a0_x == 12.0 ? r7_z : (a0_x == 13.0 ? r7_w : (a0_x == 14.0 ? r8_x : (a0_x == 15.0 ? r8_y : 0.0))))))))))))))));
@@ -1583,7 +1583,7 @@ void main()
             r1_y = r8_z - r1_y;
             r2_y = float(int(r2_y) & int(3.0));
             r1_x = float(int(r1_x) & (~int(3.0)));
-            r2_z = min(9.18340949e-41, r12_x);
+            r2_z = min(65535.0, r12_x);
             hr0_x = r1_y;
             r1_y = r2_y + r8_w;
             r2_y = (a0_x == 0.0 ? r4_z : (a0_x == 1.0 ? r4_w : (a0_x == 2.0 ? r5_x : (a0_x == 3.0 ? r5_y : (a0_x == 4.0 ? r5_z : (a0_x == 5.0 ? r5_w : (a0_x == 6.0 ? r6_x : (a0_x == 7.0 ? r6_y : (a0_x == 8.0 ? r6_z : (a0_x == 9.0 ? r6_w : (a0_x == 10.0 ? r7_x : (a0_x == 11.0 ? r7_y : (a0_x == 12.0 ? r7_z : (a0_x == 13.0 ? r7_w : (a0_x == 14.0 ? r8_x : (a0_x == 15.0 ? r8_y : 0.0))))))))))))))));

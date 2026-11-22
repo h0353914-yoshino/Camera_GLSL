@@ -288,8 +288,19 @@ static int load_prog(const char *path, U32 *out)
 static unsigned char tex_data[8][NPIX];
 
 /* 對一個 program 設定 uniform/取樣器並繪製 TR 次，結果寫入 res */
-static int render(U32 prog, unsigned char *res, int trials, char *info)
+typedef void (*fn_genfb)(int, U32 *); typedef void (*fn_bindfb)(U32, U32); typedef void (*fn_fbtex)(U32, U32, U32, U32, int);
+static fn_genfb p_genfb; static fn_bindfb p_bindfb; static fn_fbtex p_fbtex; static U32 ufb = 0, utex = 0;
+static int render(U32 prog, unsigned char *res, int trials, char *info, int umode)
 {
+    if (umode) {
+        if (!ufb) {
+            p_genfb(1, &ufb); p_genTex(1, &utex); p_activeTex(0x84c0 + 7); p_bindTex(0x0de1, utex);
+            p_texImg(0x0de1, 0, 0x8d70, 16, 16, 0, 0x8d99, 0x1405, 0);
+            p_texPar(0x0de1, 0x2801, 0x2600); p_texPar(0x0de1, 0x2800, 0x2600);
+            p_bindfb(0x8d40, ufb); p_fbtex(0x8d40, 0x8ce0, 0x0de1, utex, 0);
+        }
+        p_bindfb(0x8d40, ufb);
+    } else p_bindfb(0x8d40, 0);
     p_useprog(prog);
     int nu = 0; glGetProgramiv(prog, 0x8b86, &nu);
     int apos = p_getattr(prog, "vPosition"), acoord = p_getattr(prog, "inTexCoord");
@@ -344,10 +355,10 @@ static int render(U32 prog, unsigned char *res, int trials, char *info)
             else if (kind == 1) { switch (comps) { case 1: p_u1iv(loc, size, iv); break; case 2: p_u2iv(loc, size, iv); break; case 3: p_u3iv(loc, size, iv); break; default: p_u4iv(loc, size, iv); } }
             else { switch (comps) { case 1: p_u1uv(loc, size, uv); break; case 2: p_u2uv(loc, size, uv); break; case 3: p_u3uv(loc, size, uv); break; default: p_u4uv(loc, size, uv); } }
         }
-        p_clearcolor(0,0,0,0); p_clear(0x4000);
+        if (!umode) { p_clearcolor(0,0,0,0); p_clear(0x4000); }
         p_draw(4, 0, 3);
-        p_readpix(0, 0, 16, 16, 0x1908, 0x1401, res + pos);
-        pos += NPIX;
+        if (umode) { p_readpix(0, 0, 16, 16, 0x8d99, 0x1405, res + pos); pos += NPIX * 4; }
+        else { p_readpix(0, 0, 16, 16, 0x1908, 0x1401, res + pos); pos += NPIX; }
         (void)unit;
     }
     int e = p_err();
@@ -368,7 +379,7 @@ static void upload_textures(unsigned seed)
     }
 }
 
-static unsigned char res_a[NPIX * 24], res_b[NPIX * 24];
+static unsigned char res_a[NPIX * 4 * 24], res_b[NPIX * 4 * 24];
 
 __attribute__((constructor)) static void pixel_run(void)
 {
@@ -395,7 +406,7 @@ __attribute__((constructor)) static void pixel_run(void)
     L(p_getloc,"glGetUniformLocation"); L(p_uni1i,"glUniform1i"); L(p_enablev,"glEnableVertexAttribArray"); L(p_vattrptr,"glVertexAttribPointer");
     L(p_draw,"glDrawArrays"); L(p_readpix,"glReadPixels"); L(p_err,"glGetError"); L(p_clear,"glClear"); L(p_clearcolor,"glClearColor"); L(p_disable,"glDisable");
     L(p_getattr,"glGetAttribLocation"); L(p_progbin,"glProgramBinary"); L(p_finish,"glFinish");
-    L(p_gau,"glGetActiveUniform"); L(p_um2,"glUniformMatrix2fv"); L(p_um3,"glUniformMatrix3fv"); L(p_um4,"glUniformMatrix4fv");
+    L(p_gau,"glGetActiveUniform"); L(p_genfb,"glGenFramebuffers"); L(p_bindfb,"glBindFramebuffer"); L(p_fbtex,"glFramebufferTexture2D"); L(p_um2,"glUniformMatrix2fv"); L(p_um3,"glUniformMatrix3fv"); L(p_um4,"glUniformMatrix4fv");
     L(p_u1fv,"glUniform1fv"); L(p_u2fv,"glUniform2fv"); L(p_u3fv,"glUniform3fv"); L(p_u4fv,"glUniform4fv");
     L(p_u1iv,"glUniform1iv"); L(p_u2iv,"glUniform2iv"); L(p_u3iv,"glUniform3iv"); L(p_u4iv,"glUniform4iv");
 #if CTX_VER >= 3
@@ -406,8 +417,9 @@ __attribute__((constructor)) static void pixel_run(void)
     upload_textures(4242);
     char line[1024];
     while (fgets(line, sizeof(line), parameters)) {
-        char *name = line, *a = 0, *b = 0;
-        for (char *p = line; *p; ++p) { if (*p == ' ' || *p == '\t') { *p = 0; if (!a) a = p + 1; else if (!b) b = p + 1; } if (*p == '\n') { *p = 0; break; } }
+        char *name = line, *a = 0, *b = 0, *md = 0;
+        for (char *p = line; *p; ++p) { if (*p == ' ' || *p == '\t') { *p = 0; if (!a) a = p + 1; else if (!b) b = p + 1; else if (!md) md = p + 1; } if (*p == '\n') { *p = 0; break; } }
+        int umode = md && md[0] == 'u'; int tsz = umode ? NPIX * 4 : NPIX;
         if (!a || !b) continue;
         U32 pa = 0, pb = 0; char info[64] = "";
         int la = load_prog(a, &pa), lb = load_prog(b, &pb);
@@ -421,12 +433,12 @@ __attribute__((constructor)) static void pixel_run(void)
         }
         for (int w = 0; w < 2; ++w) { U32 pp = w ? pb : pa; int nn = 0; glGetProgramiv(pp, 0x8b86, &nn); printf("U%c %s", w ? 'b' : 'a', name);
             for (int u = 0; u < nn; ++u) { char nm[96]; int ln = 0, sz = 0; U32 ty = 0; p_gau(pp, u, sizeof(nm), &ln, &sz, &ty, nm); printf(" %s:%x:%d@%d", nm, ty, sz, p_getloc(pp, nm)); } printf("\n"); }
-        int ea = render(pa, res_a, trials, info);
-        int eb = render(pb, res_b, trials, info);
+        int ea = render(pa, res_a, trials, info, umode);
+        int eb = render(pb, res_b, trials, info, umode);
         int nd = 0, mx = 0, nz = 0;
-        for (int i = 0; i < NPIX * trials; ++i) { int d = res_a[i] - res_b[i]; if (d < 0) d = -d; if (d) nd++; if (d > mx) mx = d; if (res_a[i]) nz++; }
-        { int shown = 0; for (int i = 0; i < NPIX * trials && shown < 6; ++i) if (res_a[i] != res_b[i]) { printf("D %s t%d px%d c%d a=%d b=%d\n", name, i / NPIX, (i % NPIX) / 4, i % 4, res_a[i], res_b[i]); shown++; } }
-        int bt = 0; for (int t = 0; t < trials; ++t) { int dd = 0; for (int k = 0; k < NPIX; ++k) if (res_a[t * NPIX + k] != res_b[t * NPIX + k]) { dd = 1; break; } bt += dd; }
+        for (int i = 0; i < tsz * trials; ++i) { int d = res_a[i] - res_b[i]; if (d < 0) d = -d; if (d) nd++; if (d > mx) mx = d; if (res_a[i]) nz++; }
+        { int shown = 0; for (int i = 0; i < tsz * trials && shown < 6; ++i) if (res_a[i] != res_b[i]) { printf("D %s t%d off%d a=%d b=%d\n", name, i / tsz, i % tsz, res_a[i], res_b[i]); shown++; } }
+        int bt = 0; for (int t = 0; t < trials; ++t) { int dd = 0; for (int k = 0; k < tsz; ++k) if (res_a[t * tsz + k] != res_b[t * tsz + k]) { dd = 1; break; } bt += dd; }
         printf("%s\tok\t%d\t%d\t%d\t%d\t%d\t%s\t%d\n", name, nd, mx, nz, ea, eb, info, bt);
         fflush(0);
     }

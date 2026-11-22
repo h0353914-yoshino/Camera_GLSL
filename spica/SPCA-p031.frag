@@ -6,7 +6,7 @@ uniform highp sampler2D texImage;
 uniform highp vec4 drOffset;
 uniform highp vec2 drGain;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 void main()
 {
@@ -134,9 +134,9 @@ void main()
     r0_z = r0_z + r1_y;
     r0_w = r0_w + r1_z;
     r0_x = r0_x + r1_w;
-    r0_y = min(r0_y, 9.18340949e-41);
-    r0_z = min(r0_z, 9.18340949e-41);
-    r0_w = min(r0_w, 9.18340949e-41);
-    r1_x = min(r0_x, 9.18340949e-41);
-    fragColor = vec4(r0_y, r0_z, r0_w, r1_x);
+    r0_y = min(r0_y, 65535.0);
+    r0_z = min(r0_z, 65535.0);
+    r0_w = min(r0_w, 65535.0);
+    r1_x = min(r0_x, 65535.0);
+    fragColor = uvec4(uint(r0_y), uint(r0_z), uint(r0_w), uint(r1_x));
 }

@@ -7,7 +7,7 @@ uniform highp vec2 dstPixSize;
 uniform highp vec2 params;
 uniform highp vec2 sadPixSize;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 void main()
 {
@@ -214,5 +214,5 @@ void main()
     r1_x = r1_z * exp2(15.0);
     r0_z = r0_z + r1_y;
     r0_z = r0_z + r1_x;
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

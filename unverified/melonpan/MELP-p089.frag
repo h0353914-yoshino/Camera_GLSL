@@ -8,7 +8,7 @@ uniform highp vec4 params;
 uniform highp vec2 dstPixSize;
 uniform highp vec2 sadPixSize;
 in highp vec2 texCoord;
-out highp vec4 fragColor;
+out highp uvec4 fragColor;
 
 void main()
 {
@@ -102,9 +102,9 @@ void main()
     r0_x = 2.0 * r0_y + r0_x;
     r6_w = r0_x + 0.5;
     r0_x = floor(r0_z / exp2(31.0));
-    r0_x = float(int(r0_x) & int(4.59163468e-41));
+    r0_x = float(int(r0_x) & int(32767.0));
     r0_x = r0_x + r0_z;
-    r0_x = float(int(r0_x) & int(0.0));
+    r0_x = float(int(r0_x) & int((-32768.0)));
     r0_x = r0_z - r0_x;
     r0_y = (r0_x < 0.0) ? 1.0 : 0.0;
     r0_z = (-r0_x);
@@ -302,9 +302,9 @@ void main()
         r0_x = r0_z;
     }
     r0_z = floor(r1_x / exp2(31.0));
-    r0_z = float(int(r0_z) & int(4.59163468e-41));
+    r0_z = float(int(r0_z) & int(32767.0));
     r0_z = r0_z + r1_x;
-    r0_z = float(int(r0_z) & int(0.0));
+    r0_z = float(int(r0_z) & int((-32768.0)));
     r0_z = r1_x - r0_z;
     r0_w = (r0_z < 0.0) ? 1.0 : 0.0;
     r1_x = (-r0_z);
@@ -505,5 +505,5 @@ void main()
         r0_z = r0_w;
         r0_w = r5_x;
     }
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
 }

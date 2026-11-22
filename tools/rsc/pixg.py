@@ -8,9 +8,10 @@ def compare(items,ctx=3):
     """items: [(name, orig_bin_path, ours_bin_path)] -> {name: (status, ndiff, maxdiff, nz, info)}"""
     tmp='/home/h/tmp/SemcCameraUI/.tmp/rsc_all/pixwork'; shutil.rmtree(tmp,ignore_errors=True); os.makedirs(tmp+'/b')
     rows=[]
-    for n,a,b in items:
+    for it in items:
+        n,a,b=it[:3]; md=it[3] if len(it)>3 else ''
         shutil.copy(a,f'{tmp}/b/{n}.a'); shutil.copy(b,f'{tmp}/b/{n}.b')
-        rows.append(f'{n}\t{D}/b/{n}.a\t{D}/b/{n}.b')
+        rows.append(f'{n}\t{D}/b/{n}.a\t{D}/b/{n}.b\t{md}')
     open(tmp+'/params','w').write('\n'.join(rows)+'\n')
     s.run('shell',f'rm -rf {D}; mkdir -p {D}')
     s.run('push',s.w(f'{PIX}/pixelg{ctx}.so'),f'{D}/pixel.so')
