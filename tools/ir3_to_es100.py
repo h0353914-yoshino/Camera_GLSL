@@ -245,8 +245,9 @@ class Lifter:
                 inner = dict(loops); inner[pc] = end
                 self.structure(pc, end, out, ind + 1, loop_end=end + 1, loops=inner)
                 if self.ins[end][1] == 'br':
-                    m2 = re.match(r'(!?)p0\.x, #l\d+$', self.ins[end][2])
-                    again = 'p0' if not m2[1] else '!p0'
+                    m2 = re.match(r'(!?)p0\.([xy]), #l\d+$', self.ins[end][2])
+                    pv = 'p0' if m2[2] == 'x' else 'p1'
+                    again = pv if not m2[1] else '!' + pv
                     out.append(f'{pad}    if (!({again})) break;')
                 out.append(f'{pad}}}')
                 pc = end + 1
@@ -268,12 +269,13 @@ class Lifter:
                 pc += 1
                 continue
             if op in ('br', 'brac.0', 'brac.1'):
-                m = re.match(r'(!?)p0\.x, #(l\d+)$', rest)
-                cond, label = m.groups()
+                m = re.match(r'(!?)p0\.([xy]), #(l\d+)$', rest)
+                cond, pch, label = m.groups()
+                pv = 'p0' if pch == 'x' else 'p1'
                 t = self.labels[label]
                 # br p0.x → p0 為真時跳走；fallthrough 於 p0 為假時執行
-                take = f'p0' if not cond else '!p0'
-                fall = '!p0' if not cond else 'p0'
+                take = pv if not cond else '!' + pv
+                fall = '!' + pv if not cond else pv
                 if loop_end is not None and t >= loop_end:
                     out.append(f'{pad}if ({take}) break;')
                     pc += 1
@@ -317,7 +319,7 @@ class Lifter:
         head = ['#version 100'] + (['#extension GL_OES_EGL_image_external : require'] if self.external else []) + ['precision highp float;', '']
         head += ['uniform highp sampler2D wakuTexUnit;', 'uniform highp samplerExternalOES texUnit;' if self.external else 'uniform highp sampler2D texUnit;']
         head += [f'uniform {"mediump" if self.uni_kind.get(n) == {"hc"} else "highp"} {t} {n};' for n, t in self.uniforms.items()]
-        head += ['varying highp vec2 texCoord;', ''] + (['highp vec4 fetchWaku(vec2 uv)', '{', '    return texture2D(wakuTexUnit, uv);', '}', '', f'{self.sample_prec.get(self.ext_pc, "highp")} vec4 fetchExt(vec2 uv)', '{', '    return texture2D(texUnit, uv);', '}', ''] if self.external else []) + ['void main()', '{', '    bool p0;'] + [f'    {self.sample_prec.get(int(v[6:]), "highp")} vec4 {v};' for v in sorted(self.sample_vars)] + decl + region + body
+        head += ['varying highp vec2 texCoord;', ''] + (['highp vec4 fetchWaku(vec2 uv)', '{', '    return texture2D(wakuTexUnit, uv);', '}', '', f'{self.sample_prec.get(self.ext_pc, "highp")} vec4 fetchExt(vec2 uv)', '{', '    return texture2D(texUnit, uv);', '}', ''] if self.external else []) + ['void main()', '{', '    bool p0;', '    bool p1;'] + [f'    {self.sample_prec.get(int(v[6:]), "highp")} vec4 {v};' for v in sorted(self.sample_vars)] + decl + region + body
         head += ['    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);', '}', '']
         return '\n'.join(head)
 
