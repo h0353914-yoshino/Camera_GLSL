@@ -1,0 +1,72 @@
+#version 100
+precision highp float;
+
+uniform highp sampler2D texUnit0;
+uniform highp sampler2D texUnitHist;
+varying highp vec2 texCoord;
+
+void main()
+{
+    bool p0;
+    bool p1;
+    highp vec4 sample18;
+    highp vec4 sample20;
+    highp vec4 sample22;
+    highp vec4 sample24;
+    highp vec4 samplePF0;
+    mediump float hr0_w;
+    mediump float hr0_x;
+    mediump float hr0_y;
+    mediump float hr0_z;
+    highp float r0_w;
+    highp float r0_x;
+    highp float r0_y;
+    highp float r0_z;
+    highp float r1_w;
+    highp float r1_x;
+    highp float r1_y;
+    highp float r1_z;
+    highp float r2_x;
+    highp float r2_y;
+    highp float r2_z;
+    highp float r63_x;
+    samplePF0 = texture2D(texUnit0, texCoord.xy);
+    r0_z = samplePF0.x;
+    r0_w = samplePF0.y;
+    r1_x = samplePF0.z;
+    r1_y = samplePF0.w;
+    r63_x = texCoord.x;
+    r0_y = 0.5;
+    r1_z = 0.5;
+    r2_x = 0.5;
+    r2_z = 0.5;
+    r0_x = 255.0 * r0_z + 0.5;
+    r0_z = 255.0 * r0_w + 0.5;
+    r0_w = 255.0 * r1_x + 0.5;
+    r1_x = 255.0 * r1_y + 0.5;
+    r0_x = floor(r0_x);
+    r0_z = floor(r0_z);
+    r0_w = floor(r0_w);
+    r1_x = floor(r1_x);
+    r0_x = r0_x + 0.5;
+    r0_z = r0_z + 0.5;
+    r0_w = r0_w + 0.5;
+    r1_x = r1_x + 0.5;
+    r0_x = r0_x * 0.00390625;
+    r1_y = r0_z * 0.00390625;
+    r1_w = r0_w * 0.00390625;
+    r2_y = r1_x * 0.00390625;
+    sample18 = texture2D(texUnitHist, vec2(r0_x, r0_y));
+    r0_x = sample18.x;
+    sample20 = texture2D(texUnitHist, vec2(r1_y, r1_z));
+    r0_y = sample20.x;
+    sample22 = texture2D(texUnitHist, vec2(r1_w, r2_x));
+    r0_z = sample22.x;
+    sample24 = texture2D(texUnitHist, vec2(r2_y, r2_z));
+    r0_w = sample24.x;
+    hr0_x = r0_x * 0.003921568859368563;
+    hr0_y = r0_y * 0.003921568859368563;
+    hr0_z = r0_z * 0.003921568859368563;
+    hr0_w = r0_w * 0.003921568859368563;
+    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+}
