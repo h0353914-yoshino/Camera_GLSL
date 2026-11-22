@@ -55,3 +55,13 @@ cc_library_shared {
     ],
     local_include_dirs: ["."],
 }
+
+cc_library_shared {
+    name: "libsomc_bordeauxrsc",
+    defaults: ["somc_rsc_defaults"],
+    srcs: [
+        "src/libsomc_bordeauxrsc.c",
+        "src/libsomc_bordeauxrsc_res.S",
+    ],
+    local_include_dirs: ["."],
+}
