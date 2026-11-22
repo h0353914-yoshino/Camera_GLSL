@@ -273,6 +273,14 @@ class Lifter:
                     raise ValueError(f'未結構化的 jump @{pc} → {t}')
                 pc += 1
                 continue
+            if op in ('brac.0', 'brac.1') and re.fullmatch(r'#l\d+', rest.strip()):
+                t = self.labels[rest.strip()[1:]]
+                last = self.ins[t - 1]
+                assert last[1] == 'jump', f'brac 無 else @{pc}'
+                m_end = self.target(last[2])
+                self.structure(pc + 1, t - 1, out, ind, loop_end, loops)
+                pc = m_end
+                continue
             if op in ('br', 'brac.0', 'brac.1'):
                 m = re.match(r'(!?)p0\.([xy]), #(l\d+)$', rest)
                 cond, pch, label = m.groups()

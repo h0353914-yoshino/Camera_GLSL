@@ -48,6 +48,10 @@ def interface(data, utypes=None, si=(0, 1)):
             for c in range(size // 4):
                 if ty.startswith('mat'):
                     n = int(ty[3]); ref = f'{name}[{c // n}][{c % n}]'
+                elif size > 16 and ty in ('float', 'int', 'uint'):
+                    ref = f'{name}[{c}]'
+                elif size > 16 and ty in ('vec2', 'ivec2', 'uvec2'):
+                    ref = f'{name}[{c // 2}].{SW[c % 2]}'
                 elif size > 16:
                     ref = f'{name}[{c // 4}].{SW[c % 4]}'
                 else:
@@ -216,7 +220,7 @@ class LifterM(R.LifterR):
             self.sample_prec[pc] = 'mediump' if prec == 'f16' else 'highp'
             self.used_slots.add(int(samp))
             fetch = f'texture2D({self.sampler(int(samp))}, vec2({self.var(ck, ci)}, {self.var(ck, ci + 1)}))'
-            if prec[0] in 'su':
+            if prec[0] in 'su' or (self.stypes.get(self.sampler(int(samp))) or '')[:1] in ('u', 'i'):
                 fetch = f'vec4({fetch})'
             out.append(f'{pad}{sample} = {fetch};')
             for ch in mask:
@@ -230,15 +234,17 @@ class LifterM(R.LifterR):
         body = []
         for i, (vary, slot, tex, dest, mask, kind, *_) in enumerate(self.prefetch):
             self.sample_vars.add(f'samplePF{i}')
-            body.append(f'    samplePF{i} = texture2D({self.sampler(slot)}, texCoord.xy);')
+            fe = f'texture2D({self.sampler(slot)}, texCoord.xy)'
+            if (self.stypes.get(self.sampler(slot)) or '')[:1] in ('u', 'i'):
+                fe = f'vec4({fe})'
+            body.append(f'    samplePF{i} = {fe};')
             self.max_bary = max(self.max_bary, 2)
             for b in range(4):
                 if mask & (1 << b):
                     body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = samplePF{i}.{SW[b]};')
         self.structure(0, len(self.ins), body, 1)
         ok = 'hr' if self.out_half else 'r'
-        for ch in SW:
-            self.used.add((ok, f'{ok}0_{ch}'))
+        oreg = [self.var(ok, self.outinfo[3] * 4 + c) for c in self.outinfo[6:10]]
         decl = [f'    {"mediump" if k == "hr" else "highp"} float {n};' for k, n in sorted(self.used)]
         if self.uses_a0:
             decl.append('    highp float a0_x;')
@@ -261,7 +267,7 @@ class LifterM(R.LifterR):
         head += decl
         head += [f'    {n};' for n, _ in sorted(self.uorder.items(), key=lambda kv: kv[1]) if n in self.uniforms]
         head += body
-        head += [f'    {"fragColor" if self.es3 else "gl_FragColor"} = vec4({ok}0_x, {ok}0_y, {ok}0_z, {ok}0_w);', '}', '']
+        head += [f'    {"fragColor" if self.es3 else "gl_FragColor"} = vec4({oreg[0]}, {oreg[1]}, {oreg[2]}, {oreg[3]});', '}', '']
         text = '\n'.join(head)
         if self.es3:
             text = text.replace('texture2D(', 'texture(')

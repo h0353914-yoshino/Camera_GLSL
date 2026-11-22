@@ -1053,5 +1053,5 @@ void main()
     r1_y = r0_z * 0.003921568859368563;
     r1_z = r0_w * 0.003921568859368563;
     r1_w = r0_y * 0.003921568859368563;
-    fragColor = vec4(r0_x, r0_y, r0_z, r0_w);
+    fragColor = vec4(r1_x, r1_y, r1_z, r1_w);
 }
