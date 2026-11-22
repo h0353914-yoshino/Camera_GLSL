@@ -11,6 +11,9 @@ NM='/home/h/lineageos/prebuilts/clang/host/linux-x86/clang-r596125/bin/llvm-nm'
 OUT=sys.argv[1]; MODS=sys.argv[2:] or ['marble','melonpan','toppo','bordeaux','canele','spica','mugichoco','yummy']
 rows=pickle.load(open(R+'run2_all11.pkl','rb'))[1]; sane=pickle.load(open(R+'sane_pass.pkl','rb'))
 verified={n for n,v in rows.items() if v[0] in ('PASS','zero') or n in sane}
+BINDIR=os.environ.get('BINDIR',R+'pixtmp')
+if os.environ.get('ALL'):
+    verified={f[:-4] for f in os.listdir(BINDIR) if f.endswith('.bin')}
 os.makedirs(OUT,exist_ok=True)
 for m in MODS:
     d,holders=extract.parse(m)
@@ -23,8 +26,8 @@ for m in MODS:
     for h,(addr,offs) in holders.items():
         for i,o in enumerate(offs):
             fl,ln=struct.unpack_from('<II',d,o); name=f'{m}_{h}-p{i+1}'
-            if name in verified and os.path.exists(f'{R}pixtmp/{name}.bin'):
-                nb=open(f'{R}pixtmp/{name}.bin','rb').read(); fmt=struct.unpack_from('<I',nb)[0]; body=nb[8:]
+            if name in verified and os.path.exists(f'{BINDIR}/{name}.bin'):
+                nb=open(f'{BINDIR}/{name}.bin','rb').read(); fmt=struct.unpack_from('<I',nb)[0]; body=nb[8:]
                 exact=len(body); body+=b'\0'*((-(len(body)+8))%16); plain=struct.pack('<II',fmt,exact)+body
                 ko,io=kf[fl]
                 ct=Cipher(algorithms.AES(lib[ko:ko+32]),modes.CBC(lib[io:io+16])).encryptor().update(plain)
