@@ -363,6 +363,11 @@ class LifterM(R.LifterR):
                     terminated = True
                     break
                 if re.fullmatch(r'brac\.\d+', op) and re.fullmatch(r'#l\d+', rest.strip()):
+                    tgt = labels[rest.strip()[1:]]
+                    if self.region_hidden(pc + 1, tgt if ins[tgt - 1][1] != 'jump' else tgt - 1):
+                        out.append(f'            blk = {tgt}; break;')
+                        terminated = True
+                        break
                     continue
                 if op in ('br', 'brao', 'braa'):
                     if op == 'br':
@@ -424,7 +429,10 @@ class LifterM(R.LifterR):
         lines += decl
         lines += ['    r0_x = vPosition.x;', '    r0_y = vPosition.y;', '    r0_z = vPosition.z;', '    r0_w = vPosition.w;', '    r1_x = inTexCoord.x;', '    r1_y = inTexCoord.y;']
         lines += body
-        lines += ['    gl_Position = vec4(r0_x, r0_y, r0_z, r0_w);', '    texCoord = vec2(r1_x, r1_y);', '}', '']
+        if any(self.utypes[n][0] == 'mat4' for n in names):
+            lines += ['    gl_Position = vec4(r0_z, r0_w, r1_x, r1_y);', '    texCoord = vec2(r0_x, r0_y);', '}', '']
+        else:
+            lines += ['    gl_Position = vec4(r0_x, r0_y, r0_z, r0_w);', '    texCoord = vec2(r1_x, r1_y);', '}', '']
         return '\n'.join(lines)
 
     def vertex_plain(self):

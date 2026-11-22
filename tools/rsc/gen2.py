@@ -9,7 +9,7 @@ R=B+'rsc_all/'
 CL='/home/h/lineageos/prebuilts/clang/host/linux-x86/clang-r596125/bin/clang'
 NM='/home/h/lineageos/prebuilts/clang/host/linux-x86/clang-r596125/bin/llvm-nm'
 OUT=sys.argv[1]; MODS=sys.argv[2:] or ['marble','melonpan','toppo','bordeaux','canele','spica','mugichoco','yummy']
-rows=pickle.load(open(R+'run2_all10.pkl','rb'))[1]; sane=pickle.load(open(R+'sane_pass.pkl','rb'))
+rows=pickle.load(open(R+'run2_all11.pkl','rb'))[1]; sane=pickle.load(open(R+'sane_pass.pkl','rb'))
 verified={n for n,v in rows.items() if v[0] in ('PASS','zero') or n in sane}
 os.makedirs(OUT,exist_ok=True)
 for m in MODS:

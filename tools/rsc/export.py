@@ -3,7 +3,7 @@ sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/ir3'); sys.path.insert(0,'/home
 import run2, ir3_to_es100_m as M
 R=run2.ROOT+'/'
 OUT=sys.argv[1]
-gen,rows=pickle.load(open(R+'run2_all10.pkl','rb'))
+gen,rows=pickle.load(open(R+'run2_all11.pkl','rb'))
 good=pickle.load(open(R+'perm2_good.pkl','rb'))
 sane=pickle.load(open(R+'sane_pass.pkl','rb'))
 passed=sorted(n for n,v in rows.items() if v[0] in ('PASS','zero') or n in sane)

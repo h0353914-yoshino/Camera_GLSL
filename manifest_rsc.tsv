@@ -3,6 +3,11 @@ bordeaux-BDX-p010	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p010.frag
 bordeaux-BDX-p011	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p011.frag
 bordeaux-BDX-p012	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p012.frag
 bordeaux-BDX-p013	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p013.frag
+bordeaux-BDX-p014	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p014.frag
+bordeaux-BDX-p015	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p015.frag
+bordeaux-BDX-p016	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p016.frag
+bordeaux-BDX-p017	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p017.frag
+bordeaux-BDX-p018	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p018.frag
 bordeaux-BDX-p002	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p002.frag
 bordeaux-BDX-p020	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p020.frag
 bordeaux-BDX-p021	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p021.frag
@@ -22,6 +27,8 @@ bordeaux-BDX-p004	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p004.frag
 bordeaux-BDX-p005	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p005.frag
 bordeaux-BDX-p006	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p006.frag
 bordeaux-BDX-p007	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p007.frag
+bordeaux-BDX-p008	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p008.frag
+bordeaux-BDX-p009	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p009.frag
 canele-PEX-p001	gles2	canele/vertex_68e462c8.vert	canele/PEX-p001.frag
 canele-PEX-p010	gles2	canele/vertex_68e462c8.vert	canele/PEX-p010.frag
 canele-PEX-p011	gles2	canele/vertex_68e462c8.vert	canele/PEX-p011.frag
@@ -151,6 +158,7 @@ marble-YMBL-p027	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p027.frag
 marble-YMBL-p028	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p028.frag
 marble-YMBL-p029	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p029.frag
 marble-YMBL-p003	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p003.frag
+marble-YMBL-p030	gles3	marble/vertex_38a375be.vert	marble/YMBL-p030.frag
 marble-YMBL-p031	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p031.frag
 marble-YMBL-p032	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p032.frag
 marble-YMBL-p033	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p033.frag
@@ -181,6 +189,7 @@ marble-YMBL-p055	gles2	marble/vertex_5783109a.vert	marble/YMBL-p055.frag
 marble-YMBL-p056	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p056.frag
 marble-YMBL-p057	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p057.frag
 marble-YMBL-p058	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p058.frag
+marble-YMBL-p059	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p059.frag
 marble-YMBL-p006	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p006.frag
 marble-YMBL-p060	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p060.frag
 marble-YMBL-p061	gles2	marble/vertex_68e462c8.vert	marble/YMBL-p061.frag
@@ -319,6 +328,8 @@ melonpan-MELP-p099	gles2	melonpan/vertex_68e462c8.vert	melonpan/MELP-p099.frag
 melonpan-MPHM-p001	gles3	melonpan/vertex_314750c9.vert	melonpan/MPHM-p001.frag
 melonpan-MPHM-p002	gles3	melonpan/vertex_314750c9.vert	melonpan/MPHM-p002.frag
 melonpan-MPHM-p003	gles3	melonpan/vertex_314750c9.vert	melonpan/MPHM-p003.frag
+melonpan-MPHM-p004	gles3	melonpan/vertex_314750c9.vert	melonpan/MPHM-p004.frag
+melonpan-MPHM-p005	gles3	melonpan/vertex_314750c9.vert	melonpan/MPHM-p005.frag
 mugichoco-MGC-p001	gles2	mugichoco/vertex_68e462c8.vert	mugichoco/MGC-p001.frag
 mugichoco-MGC-p010	gles2	mugichoco/vertex_68e462c8.vert	mugichoco/MGC-p010.frag
 mugichoco-MGC-p011	gles2	mugichoco/vertex_68e462c8.vert	mugichoco/MGC-p011.frag
@@ -372,6 +383,7 @@ spica-SPCA-p031	gles3	spica/vertex_314750c9.vert	spica/SPCA-p031.frag
 spica-SPCA-p004	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p004.frag
 spica-SPCA-p005	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p005.frag
 spica-SPCA-p006	gles2	spica/vertex_68e462c8.vert	spica/SPCA-p006.frag
+spica-SPCA-p007	gles3	spica/vertex_314750c9.vert	spica/SPCA-p007.frag
 spica-SPCA-p008	gles3	spica/vertex_314750c9.vert	spica/SPCA-p008.frag
 spica-SPCA-p009	gles3	spica/vertex_314750c9.vert	spica/SPCA-p009.frag
 toppo-CCPL-p001	gles2	toppo/vertex_68e462c8.vert	toppo/CCPL-p001.frag

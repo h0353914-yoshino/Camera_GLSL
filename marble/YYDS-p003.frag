@@ -371,7 +371,7 @@ void main()
         r1_y = r1_y + r3_y;
         r0_y = r0_y + r1_w;
         r24_y = r2_y + r23_x;
-        p0 = hr0_x <= 3.0;
+        p0 = !(hr0_x <= 3.0);
         if (p0) break;
         r25_x = r0_w;
         r24_w = r1_y;

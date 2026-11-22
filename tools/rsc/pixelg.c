@@ -327,7 +327,7 @@ static int render(U32 prog, unsigned char *res, int trials, char *info, int umod
             int loc = p_getloc(prog, name);
             if (loc < 0) continue;
             unsigned s = hstr(name) ^ (t * 2654435761u);
-            if (type == 0x8b5e || type == 0x8d66) {
+            if (type == 0x8b5e || type == 0x8d66 || type == 0x8dd2 || type == 0x8dca) {
                 { int ui = 0; for (int i = 0; i < ns; ++i) if (!strcmp(snames[i], name)) ui = i; unit = ui; }
                 p_uni1i(loc, unit);
                 if (type == 0x8dd2 || type == 0x8dca) { p_activeTex(0x84c0 + unit); p_texImg(0x0de1, 0, type == 0x8dd2 ? 0x8d7c : 0x8d8e, 16, 16, 0, 0x8d99, 0x1401, tex_data[unit]); p_texPar(0x0de1, 0x2801, 0x2600); p_texPar(0x0de1, 0x2800, 0x2600); }
@@ -345,6 +345,7 @@ static int render(U32 prog, unsigned char *res, int trials, char *info, int umod
                 unsigned r = nrand(&s);
                 static const float pk[] = {0.0f,0.25f,0.5f,1.0f,2.0f,3.0f,-1.0f,8.0f,0.0625f,0.125f,0.75f,16.0f};
                 if (UMODE == 3) { int z = 1; { const char *o = ONLY; int q = 0; while (o[q] && name[q] == o[q]) q++; z = !(o[q] == 0 && name[q] == 0); } fv[k] = z ? 0.0f : 1.0f; iv[k] = z ? 0 : 1; uv[k] = iv[k]; continue; }
+                if (UMODE == 4) { fv[k] = 0.0625f; iv[k] = 16; uv[k] = 16; continue; }
                 if (UMODE == 1) { fv[k] = 0.0f; iv[k] = 0; uv[k] = 0; continue; } if (UMODE == 2) { fv[k] = 1.0f; iv[k] = 1; uv[k] = 1; continue; }
                 if (SANE) { if (kind == 0) fv[k] = 0.25f + ((r >> 2) & 0xffff) / 65535.0f * (((r >> 20) & 3) == 0 ? 32.0f : 3.0f); else if (kind == 1) iv[k] = 1 + (int)((r >> 2) % 16); else uv[k] = 1 + (r >> 2) % 16; continue; }
                 if (kind == 0) fv[k] = ((r & 3) == 0) ? pk[(r >> 2) % 12] : ((r >> 2) & 0xffff) / 65535.0f * (((r >> 20) & 3) == 0 ? 64.0f : 4.0f);
@@ -437,7 +438,7 @@ __attribute__((constructor)) static void pixel_run(void)
         int eb = render(pb, res_b, trials, info, umode);
         int nd = 0, mx = 0, nz = 0;
         for (int i = 0; i < tsz * trials; ++i) { int d = res_a[i] - res_b[i]; if (d < 0) d = -d; if (d) nd++; if (d > mx) mx = d; if (res_a[i]) nz++; }
-        { int shown = 0; for (int i = 0; i < tsz * trials && shown < 6; ++i) if (res_a[i] != res_b[i]) { printf("D %s t%d off%d a=%d b=%d\n", name, i / tsz, i % tsz, res_a[i], res_b[i]); shown++; } }
+        { int shown = 0; for (int i = 0; i < tsz * trials && shown < 60; ++i) if (res_a[i] != res_b[i]) { printf("D %s t%d off%d a=%d b=%d\n", name, i / tsz, i % tsz, res_a[i], res_b[i]); shown++; } }
         int bt = 0; for (int t = 0; t < trials; ++t) { int dd = 0; for (int k = 0; k < tsz; ++k) if (res_a[t * tsz + k] != res_b[t * tsz + k]) { dd = 1; break; } bt += dd; }
         printf("%s\tok\t%d\t%d\t%d\t%d\t%d\t%s\t%d\n", name, nd, mx, nz, ea, eb, info, bt);
         fflush(0);

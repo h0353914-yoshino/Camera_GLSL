@@ -331,11 +331,6 @@ void main()
     hr0_y = sample24.y;
     hr0_z = sample24.z;
     hr0_w = sample24.w;
-    hr1_x = 0.0 * hr0_w;
-    hr0_w = 1.0;
-    hr0_z = 0.0 * hr0_z + hr1_x;
-    hr0_y = 0.0 * hr0_y + hr0_z;
-    hr0_z = 0.0 * hr0_x + hr0_y;
     r0_w = r0_x;
     r1_x = r0_z;
     hr9_x = hr0_z * 255.0;
@@ -406,11 +401,6 @@ void main()
     hr2_y = sample129.y;
     hr2_z = sample129.z;
     hr2_w = sample129.w;
-    hr3_x = 0.0 * hr2_w;
-    hr2_w = 1.0;
-    hr2_z = 0.0 * hr2_z + hr3_x;
-    hr2_y = 0.0 * hr2_y + hr2_z;
-    hr2_z = 0.0 * hr2_x + hr2_y;
     r1_x = r0_y;
     r1_y = r0_w;
     hr14_x = hr2_z * 255.0;
@@ -502,11 +492,6 @@ void main()
     hr6_y = sample267.y;
     hr6_z = sample267.z;
     hr6_w = sample267.w;
-    hr7_x = 0.0 * hr6_w;
-    hr6_w = 1.0;
-    hr6_z = 0.0 * hr6_z + hr7_x;
-    hr6_y = 0.0 * hr6_y + hr6_z;
-    hr6_z = 0.0 * hr6_x + hr6_y;
     r0_y = r0_x;
     r0_z = r0_w;
     hr21_x = hr6_z * 255.0;

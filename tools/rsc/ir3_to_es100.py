@@ -205,7 +205,7 @@ class Lifter:
                 if op in self.CMP:
                     expr = f'{vals[0]} {self.CMP[op]} {vals[1]}'
                     if kind == 'p':
-                        out.append(f'{pad}p{didx} = {expr};')
+                        out.append(f'{pad}p{didx} = ' + (f'!({expr});' if (sat or '(sat)' in flags) else f'{expr};'))
                     else:
                         out.append(f'{pad}{self.var(kind, didx + lane)} = ({expr}) ? 1.0 : 0.0;')
                     continue
@@ -279,11 +279,17 @@ class Lifter:
                 t = self.labels[rest.strip()[1:]]
                 last = self.ins[t - 1]
                 if last[1] != 'jump':
-                    self.structure(pc + 1, t, out, ind, loop_end, loops)
+                    if self.region_hidden(pc + 1, t):
+                        pass
+                    else:
+                        self.structure(pc + 1, t, out, ind, loop_end, loops)
                     pc = t
                     continue
                 m_end = self.target(last[2])
-                self.structure(pc + 1, t - 1, out, ind, loop_end, loops)
+                if self.region_hidden(pc + 1, t - 1) and not self.region_hidden(t, m_end):
+                    self.structure(t, m_end, out, ind, loop_end, loops)
+                else:
+                    self.structure(pc + 1, t - 1, out, ind, loop_end, loops)
                 pc = m_end
                 continue
             if op in ('br', 'brac.0', 'brac.1', 'brao', 'braa'):
@@ -329,6 +335,14 @@ class Lifter:
                 continue
             self.emit_ins(pc, out, ind)
             pc += 1
+
+    def region_hidden(self, lo, hi):
+        """區段內是否引用原廠驅動隱含常數（資源表以外的 c 暫存器）。"""
+        for f, op, rest in self.ins[lo:hi]:
+            for m in re.finditer(r'\bh?c(\d+)\.([xyzw])', rest):
+                if 4 * int(m[1]) + SW.index(m[2]) not in self.constants:
+                    return True
+        return False
 
     # ---------------- 輸出 ----------------
     def generate(self):

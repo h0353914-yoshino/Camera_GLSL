@@ -36,6 +36,6 @@ void main()
     r0_w = orthoMatrix[0][1] * r0_x + r1_x;
     r1_x = orthoMatrix[0][2] * r0_x + r1_y;
     r1_y = orthoMatrix[0][3] * r0_x + r1_z;
-    gl_Position = vec4(r0_x, r0_y, r0_z, r0_w);
-    texCoord = vec2(r1_x, r1_y);
+    gl_Position = vec4(r0_z, r0_w, r1_x, r1_y);
+    texCoord = vec2(r0_x, r0_y);
 }

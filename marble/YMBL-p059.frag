@@ -77,7 +77,7 @@ void main()
     r2_z = texCoord.x;
     r2_w = texCoord.y;
     r0_x = heightParams2.z;
-    p0 = r0_x >= 1.0;
+    p0 = !(r0_x >= 1.0);
     r5_z = r1_z * 255.0;
     r5_w = r1_w * 255.0;
     r6_x = r2_x * 255.0;
