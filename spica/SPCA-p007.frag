@@ -1,0 +1,117 @@
+#version 300 es
+precision highp int;
+precision highp float;
+
+uniform highp usampler2D volCoef;
+uniform highp vec2 pixSize;
+uniform highp vec4 vol;
+in highp vec2 texCoord;
+out highp uvec4 fragColor;
+
+float rndne(float x)
+{
+    float f = floor(x + 0.5);
+    return (f - x == 0.5 && mod(f, 2.0) != 0.0) ? f - 1.0 : f;
+}
+
+void main()
+{
+    bool p0;
+    bool p1;
+    highp vec4 sample10;
+    highp vec4 sample12;
+    highp vec4 samplePF0;
+    highp float r0_w;
+    highp float r0_x;
+    highp float r0_y;
+    highp float r0_z;
+    highp float r1_w;
+    highp float r1_x;
+    highp float r1_y;
+    highp float r1_z;
+    highp float r2_w;
+    highp float r2_x;
+    highp float r2_y;
+    highp float r2_z;
+    highp float r3_x;
+    highp float r3_y;
+    highp float r3_z;
+    pixSize;
+    vol;
+    samplePF0 = vec4(texture(volCoef, texCoord.xy));
+    r0_z = samplePF0.x;
+    r0_w = samplePF0.y;
+    r1_x = samplePF0.z;
+    r1_y = samplePF0.w;
+    r1_z = texCoord.x;
+    r1_w = texCoord.y;
+    r0_x = r1_z - pixSize.x;
+    r0_y = r1_z + pixSize.x;
+    r2_x = r1_w;
+    r2_z = r1_w;
+    r1_w = r0_x;
+    r2_y = r0_y;
+    sample10 = vec4(texture(volCoef, vec2(r1_w, r2_x)));
+    r2_w = sample10.x;
+    r3_x = sample10.y;
+    r3_y = sample10.z;
+    r3_z = sample10.w;
+    sample12 = vec4(texture(volCoef, vec2(r2_y, r2_z)));
+    r1_z = sample12.x;
+    r1_w = sample12.y;
+    r2_x = sample12.z;
+    r2_y = sample12.w;
+    r0_x = r0_z;
+    r0_y = r0_w;
+    r0_z = r1_x;
+    r0_w = r1_y;
+    r0_x = 0.0009765625 * r0_x + -32.0;
+    r1_x = r2_w;
+    r1_y = r3_x;
+    r2_z = r3_y;
+    r2_w = r3_z;
+    r0_y = 0.0009765625 * r0_y + -32.0;
+    r0_z = 0.0009765625 * r0_z + -32.0;
+    r0_w = 0.0009765625 * r0_w + -32.0;
+    r1_z = r1_z;
+    r1_w = r1_w;
+    r2_x = r2_x;
+    r2_y = r2_y;
+    r1_x = 0.0009765625 * r1_x + -32.0;
+    r1_y = 0.0009765625 * r1_y + -32.0;
+    r2_z = 0.0009765625 * r2_z + -32.0;
+    r2_w = 0.0009765625 * r2_w + -32.0;
+    r0_x = r0_x * vol.y;
+    r0_y = r0_y * vol.y;
+    r0_z = r0_z * vol.y;
+    r0_w = r0_w * vol.y;
+    r1_z = 0.0009765625 * r1_z + -32.0;
+    r1_w = 0.0009765625 * r1_w + -32.0;
+    r2_x = 0.0009765625 * r2_x + -32.0;
+    r2_y = 0.0009765625 * r2_y + -32.0;
+    r0_x = vol.x * r1_x + r0_x;
+    r0_y = vol.x * r1_y + r0_y;
+    r0_z = vol.x * r2_z + r0_z;
+    r0_w = vol.x * r2_w + r0_w;
+    r0_x = vol.z * r1_z + r0_x;
+    r0_y = vol.z * r1_w + r0_y;
+    r0_z = vol.z * r2_x + r0_z;
+    r0_w = vol.z * r2_y + r0_w;
+    r0_x = r0_x * 1024.0;
+    r0_y = r0_y * 1024.0;
+    r0_z = r0_z * 1024.0;
+    r0_w = r0_w * 1024.0;
+    r0_x = rndne(r0_x);
+    r0_y = rndne(r0_y);
+    r0_z = rndne(r0_z);
+    r0_w = rndne(r0_w);
+    r0_x = r0_x + 32768.0;
+    r0_y = r0_y + 32768.0;
+    r0_z = r0_z + 32768.0;
+    r0_w = r0_w + 32768.0;
+    r0_x = float(int(r0_x));
+    r0_y = float(int(r0_y));
+    r0_z = float(int(r0_z));
+    r0_w = float(int(r0_w));
+    fragColor = uvec4(uint(r0_x), uint(r0_y), uint(r0_z), uint(r0_w));
+}
