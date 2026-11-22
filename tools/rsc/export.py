@@ -1,6 +1,8 @@
 import sys,pickle,os,hashlib
 sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/ir3'); sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/rsc_all')
 import run2, ir3_to_es100_m as M
+import ir3_to_es100_bits as BB
+BITS_SET={'bordeaux_BDX-p33','melonpan_MELP-p89','melonpan_MPHM-p4','melonpan_MPHM-p5'}
 R=run2.ROOT+'/'
 OUT=sys.argv[1]
 gen,rows=pickle.load(open(R+'run2_all11.pkl','rb'))
@@ -12,7 +14,7 @@ man=[]
 vseen={}
 for n in passed:
     m,hp=n.rsplit('_',1); h,p=hp.split('-p'); p=int(p)
-    L=M.LifterM(n,order=good.get(n)); fs=L.generate(); vs=L.vertex()
+    L=(BB.LifterB if n in BITS_SET else M.LifterM)(n,order=good.get(n)); fs=L.generate(); vs=L.vertex()
     d=f'{OUT}/{m}'; os.makedirs(d,exist_ok=True)
     vh=hashlib.sha1(vs.encode()).hexdigest()[:8]
     vn=f'{m}/vertex_{vh}.vert'
@@ -26,7 +28,7 @@ uman=[]
 for n in unver:
     m,hp=n.rsplit('_',1); h,p=hp.split('-p'); p=int(p)
     try:
-        L=M.LifterM(n,order=good.get(n)); fs=L.generate(); vs=L.vertex()
+        L=(BB.LifterB if n in BITS_SET else M.LifterM)(n,order=good.get(n)); fs=L.generate(); vs=L.vertex()
     except Exception as e:
         continue
     d=f'{OUT}/unverified/{m}'; os.makedirs(d,exist_ok=True)

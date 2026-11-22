@@ -2,6 +2,7 @@ import sys,itertools,pickle,os
 sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/ir3'); sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/rsc_all')
 import run2, ir3_to_es100_m as M, pixg
 from batch import compile_batch
+LIMIT=5
 def search(names):
     """對每個 shader 列舉「已用槽位 ← 取樣器名稱」的排列，回傳 {name: order dict} (通過者)"""
     cand=[]  # (key, name, order)
@@ -9,7 +10,7 @@ def search(names):
         try: L=M.LifterM(n)
         except Exception: continue
         U=L.static_slots(); S=L.samplers
-        if len(U)>5 or len(S)<len(U): continue
+        if len(U)>LIMIT or len(S)<len(U): continue
         for p in itertools.permutations(S,len(U)):
             cand.append((f'k{len(cand)}',n,dict(zip(U,p))))
     print('candidates',len(cand),flush=True)

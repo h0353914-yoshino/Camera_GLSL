@@ -3,6 +3,8 @@ sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/ir3'); sys.path.insert(0,'/home
 from batch import *
 import pixg
 import ir3_to_es100_m as M
+import ir3_to_es100_bits as BB
+BITS_SET={'bordeaux_BDX-p33','melonpan_MELP-p89','melonpan_MPHM-p4','melonpan_MPHM-p5'}
 ROOT='/home/h/tmp/SemcCameraUI/.tmp/rsc_all'
 def origbin(n):
     m,h=n.rsplit('_',1)[0],n.rsplit('_',1)[1]; h,p=h.split('-p'); return f'{ROOT}/{m}/{h}-p{int(p):03}.bin'
@@ -12,7 +14,7 @@ def run(names,tag,order_of=None,out_of=None):
     gen={}; fail={}
     for n in names:
         try:
-            L=M.LifterM(n,order=(order_of or {}).get(n),out_half=(out_of or {}).get(n)); fs=L.generate(); gen[n]=(L.vertex(),fs,L.es3,L.out_uint)
+            L=(BB.LifterB if n in BITS_SET else M.LifterM)(n,order=(order_of or {}).get(n),out_half=(out_of or {}).get(n)); fs=L.generate(); gen[n]=(L.vertex(),fs,L.es3,L.out_uint)
         except Exception as e: fail[n]=(type(e).__name__+': '+str(e))[:90]
     res={}
     for es3 in (False,True):

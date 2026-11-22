@@ -23,6 +23,7 @@ bordeaux-BDX-p003	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p003.frag
 bordeaux-BDX-p030	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p030.frag
 bordeaux-BDX-p031	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p031.frag
 bordeaux-BDX-p032	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p032.frag
+bordeaux-BDX-p033	gles3	bordeaux/vertex_314750c9.vert	bordeaux/BDX-p033.frag
 bordeaux-BDX-p004	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p004.frag
 bordeaux-BDX-p005	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p005.frag
 bordeaux-BDX-p006	gles2	bordeaux/vertex_68e462c8.vert	bordeaux/BDX-p006.frag
@@ -314,6 +315,7 @@ melonpan-MELP-p085	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p085.frag
 melonpan-MELP-p086	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p086.frag
 melonpan-MELP-p087	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p087.frag
 melonpan-MELP-p088	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p088.frag
+melonpan-MELP-p089	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p089.frag
 melonpan-MELP-p009	gles2	melonpan/vertex_68e462c8.vert	melonpan/MELP-p009.frag
 melonpan-MELP-p090	gles2	melonpan/vertex_68e462c8.vert	melonpan/MELP-p090.frag
 melonpan-MELP-p091	gles3	melonpan/vertex_314750c9.vert	melonpan/MELP-p091.frag

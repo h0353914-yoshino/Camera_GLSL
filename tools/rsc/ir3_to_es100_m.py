@@ -90,9 +90,9 @@ class LifterM(R.LifterR):
         'cov.s32f32': '{0}', 'cov.s16f16': '{0}', 'cov.u32u16': '{0}', 'cov.u16f16': '{0}', 'cov.u32f32': '{0}',
         'cov.s16f32': '{0}', 'cov.u16f32': '{0}', 'cov.s32u16': '{0}', 'cov.u16u32': '{0}',
         'mov.s16s16': '{0}', 'mov.u16u16': '{0}', 'mov.u32u32': '{0}', 'mov.f32f16': '{0}',
-        'madsh.m16': '{2}', 'madsh.u16': '{2}', 'cov.f16u16': 'float(int({0}))', 'cov.f32u16': 'float(int({0}))',
+        'madsh.m16': 'float(int({2}) + (((int({0}) & 65535) * (int({1}) >> 16)) << 16))', 'madsh.u16': 'float(int(uint({2}) + (((uint({0}) & 65535u) * (uint({1}) >> 16u)) << 16u)))', 'mull.u': 'float((int({0}) & 65535) * (int({1}) & 65535))', 'cov.f16u16': 'float(int({0}))', 'cov.f32u16': 'float(int({0}))',
         'absneg.s': '{0}', 'ashr.b': 'floor({0} / exp2({1}))', 'not.b': '(-{0} - 1.0)', 'min.s': 'min({0}, {1})', 'max.s': 'max({0}, {1})',
-        'min.u': 'min({0}, {1})', 'max.u': 'max({0}, {1})', 'mull.u': '{0} * {1}', 'rndne.f': 'rndne({0})', 'and.b': '{0}',
+        'min.u': 'min({0}, {1})', 'max.u': 'max({0}, {1})', 'rndne.f': 'rndne({0})', 'and.b': '{0}',
         'or.b': 'float(int({0}) | int({1}))', 'xor.b': 'float(int({0}) ^ int({1}))',
         'shl.b': '{0} * exp2({1})', 'shr.b': 'floor({0} / exp2({1}))',
     })
@@ -152,6 +152,9 @@ class LifterM(R.LifterR):
                 if m:
                     u.add(int(m[1]))
         return sorted(u)
+
+    def pf_val(self, i, ch, slot):
+        return f'samplePF{i}.{ch}'
 
     def slot_names(self):
         if isinstance(self.order, dict):
@@ -281,7 +284,7 @@ class LifterM(R.LifterR):
             self.max_bary = max(self.max_bary, 2)
             for b in range(4):
                 if mask & (1 << b):
-                    body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = samplePF{i}.{SW[b]};')
+                    body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = {self.pf_val(i, SW[b], slot)};')
         try:
             self.structure(0, len(self.ins), body, 1)
         except (AssertionError, ValueError) as e:
@@ -296,15 +299,20 @@ class LifterM(R.LifterR):
                 body.append(f'    samplePF{i} = {fe};')
                 for b in range(4):
                     if mask & (1 << b):
-                        body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = samplePF{i}.{SW[b]};')
+                        body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = {self.pf_val(i, SW[b], slot)};')
             self.force_es3 = True
             self.flat(body)
         ok = 'hr' if self.out_half else 'r'
         oreg = [self.var(ok, self.outinfo[3] * 4 + self.outinfo[6] + i) for i in range(4)]
-        decl = [f'    {"mediump" if k == "hr" else "highp"} float {n};' for k, n in sorted(self.used)]
-        if self.uses_a0:
-            decl.append('    highp float a0_x;')
-        self.es3 = any(t[0] in 'iu' for t, _ in self.utypes.values() if t != 'mat2') or any(t in ('isampler2D', 'usampler2D') for t in self.stypes.values()) or not self.out_half or any(o in ('and.b', 'or.b', 'xor.b', 'not.b') for _, o, _ in self.ins) or getattr(self, 'force_es3', False) or self.out_uint
+        if getattr(self, 'bits', False):
+            decl = [f'    highp uint {n};' for k, n in sorted(self.used)]
+            if self.uses_a0:
+                decl.append('    int a0_x = 0;')
+        else:
+            decl = [f'    {"mediump" if k == "hr" else "highp"} float {n};' for k, n in sorted(self.used)]
+            if self.uses_a0:
+                decl.append('    highp float a0_x;')
+        self.es3 = any(t[0] in 'iu' for t, _ in self.utypes.values() if t != 'mat2') or any(t in ('isampler2D', 'usampler2D') for t in self.stypes.values()) or not self.out_half or any(o in ('and.b', 'or.b', 'xor.b', 'not.b') or o.startswith('madsh') or o == 'mull.u' for _, o, _ in self.ins) or getattr(self, 'force_es3', False) or self.out_uint
         head = ['#version 300 es' if self.es3 else '#version 100', 'precision highp float;', '']
         if self.es3: head.insert(1, 'precision highp int;')
         if any(t == 'samplerExternalOES' for t in self.stypes.values()):
@@ -323,7 +331,7 @@ class LifterM(R.LifterR):
         head += decl
         head += [f'    {n};' for n, _ in sorted(self.uorder.items(), key=lambda kv: kv[1]) if n in self.uniforms]
         head += body
-        head += [f'    {"fragColor" if self.es3 else "gl_FragColor"} = {"uvec4" if self.out_uint else "vec4"}({", ".join((f"uint({r})" if self.out_uint else r) for r in oreg)});', '}', '']
+        head += [f'    {"fragColor" if self.es3 else "gl_FragColor"} = {"uvec4" if self.out_uint else "vec4"}({", ".join(((r if getattr(self, 'bits', False) else f"uint({r})") if self.out_uint else (f"uintBitsToFloat({r})" if getattr(self, 'bits', False) else r)) for r in oreg)});', '}', '']
         text = '\n'.join(head)
         if self.es3:
             text = text.replace('texture2D(', 'texture(')
