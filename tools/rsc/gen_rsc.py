@@ -3,11 +3,11 @@
 
 資源記錄與原廠格式相同：[旗標 u32][長度 u32][資料]。旗標 0＝未加密 GLSL 原始碼，
 呼叫端會直接交給 createProgram。資料：[vs 長度][vs\\0][fs 長度][fs\\0]。
-GLSL 用 .incbin 從 glsl/（Camera_GLSL 子模組）嵌入，長度由組譯器以標籤相減算出，
+GLSL 用 .incbin 從同倉庫根目錄嵌入，長度由組譯器以標籤相減算出，
 所以只改 GLSL 內容不必重新產生；增減程式或改檔名才需要重跑。
 用法：python3 tools/rsc/gen_rsc.py <輸出目錄>
 在本倉庫根目錄執行；輸出的 .c／_res.S 提交到 lineage-24.0 分支的 src/。
-.incbin 路徑相對於 lineage-24.0 分支根目錄（即 vendor/sony/camera 的子模組 rsc/glsl）。
+.incbin 路徑相對於 lineage-24.0 分支根目錄（即 vendor/sony/camera 的子模組 rsc）。
 """
 import json, os, sys
 
