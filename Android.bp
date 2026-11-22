@@ -105,3 +105,13 @@ cc_library_shared {
     ],
     local_include_dirs: ["."],
 }
+
+cc_library_shared {
+    name: "libsomc_raisinrsc",
+    defaults: ["somc_rsc_defaults"],
+    srcs: [
+        "src/libsomc_raisinrsc.c",
+        "src/libsomc_raisinrsc_res.S",
+    ],
+    local_include_dirs: ["."],
+}
