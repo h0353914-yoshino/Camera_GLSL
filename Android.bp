@@ -95,3 +95,13 @@ cc_library_shared {
     ],
     local_include_dirs: ["."],
 }
+
+cc_library_shared {
+    name: "libsomc_yummyrsc",
+    defaults: ["somc_rsc_defaults"],
+    srcs: [
+        "src/libsomc_yummyrsc.c",
+        "src/libsomc_yummyrsc_res.S",
+    ],
+    local_include_dirs: ["."],
+}
