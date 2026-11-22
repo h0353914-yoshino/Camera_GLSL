@@ -1,10 +1,12 @@
-#version 100
-#extension GL_OES_EGL_image_external : require
+#version 300 es
+#extension GL_OES_EGL_image_external_essl3 : require
+precision highp int;
 precision highp float;
 
 uniform highp samplerExternalOES texUnit0;
 uniform highp vec2 pixSize;
-varying highp vec2 texCoord;
+in highp vec2 texCoord;
+out mediump vec4 fragColor;
 
 void main()
 {
@@ -73,42 +75,42 @@ void main()
     r1_y = r2_y;
     r1_w = r0_y;
     r2_x = r3_z;
-    sample19 = texture2D(texUnit0, vec2(r0_z, r0_w));
+    sample19 = texture(texUnit0, vec2(r0_z, r0_w));
     r2_z = sample19.x;
     r2_w = sample19.y;
     r3_x = sample19.z;
     r3_y = sample19.w;
     r0_z = r3_z;
     r0_w = r0_y;
-    sample23 = texture2D(texUnit0, vec2(r1_x, r1_y));
+    sample23 = texture(texUnit0, vec2(r1_x, r1_y));
     r3_z = sample23.x;
     r3_w = sample23.y;
     r4_x = sample23.z;
     r4_y = sample23.w;
-    sample25 = texture2D(texUnit0, vec2(r1_z, r1_w));
+    sample25 = texture(texUnit0, vec2(r1_z, r1_w));
     r1_x = sample25.x;
     r1_y = sample25.y;
     r1_z = sample25.z;
     r1_w = sample25.w;
-    sample26 = texture2D(texUnit0, vec2(r0_x, r0_y));
+    sample26 = texture(texUnit0, vec2(r0_x, r0_y));
     r4_z = sample26.x;
     r4_w = sample26.y;
     r5_x = sample26.z;
     r5_y = sample26.w;
-    sample28 = texture2D(texUnit0, vec2(r2_x, r2_y));
+    sample28 = texture(texUnit0, vec2(r2_x, r2_y));
     r5_z = sample28.x;
     r5_w = sample28.y;
     r6_x = sample28.z;
     r6_y = sample28.w;
     r2_x = 0.0;
-    sample30 = texture2D(texUnit0, vec2(r0_z, r0_w));
+    sample30 = texture(texUnit0, vec2(r0_z, r0_w));
     r0_x = sample30.x;
     r0_y = sample30.y;
     r0_z = sample30.z;
     r0_w = sample30.w;
     hr0_x = r2_x;
     r2_x = hr0_x;
-    hr0_x = hr0_x;
+    hr0_x = float(int(hr0_x) & int(1.0));
     p0 = hr0_x == 1.0;
     r2_y = 0.0 * r3_y;
     r6_z = 0.0 * r3_y;
@@ -219,5 +221,5 @@ void main()
     hr0_y = r0_y * 0.003921568859368563;
     hr0_z = r0_z * 0.003921568859368563;
     hr0_w = r0_w * 0.003921568859368563;
-    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+    fragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
 }

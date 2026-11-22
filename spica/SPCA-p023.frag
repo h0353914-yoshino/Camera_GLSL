@@ -533,5 +533,5 @@ void main()
     hr4_y = hr0_x * 0.0039215087890625;
     hr4_w = hr4_z;
     hr5_x = hr4_z;
-    gl_FragColor = vec4(hr4_y, hr4_z, hr4_w, hr4_x);
+    gl_FragColor = vec4(hr4_y, hr4_z, hr4_w, hr5_x);
 }

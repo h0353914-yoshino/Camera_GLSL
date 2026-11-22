@@ -261,6 +261,7 @@ typedef void (*fn_uuv)(int,int,const unsigned*);
 typedef void (*fn_vap4)(U32,float,float,float,float);
 typedef void (*fn_bindattr)(U32,U32,const char*);
 typedef void (*fn_gensamp)(void);
+typedef void (*fn_um)(int,int,int,const float*); static fn_um p_um2,p_um3,p_um4;
 static fn_gau p_gau; static fn_ufv p_u1fv,p_u2fv,p_u3fv,p_u4fv; static fn_uiv p_u1iv,p_u2iv,p_u3iv,p_u4iv; static fn_uuv p_u1uv,p_u2uv,p_u3uv,p_u4uv;
 typedef void (*fn_getprogiv)(U32,U32,int*);
 
@@ -304,7 +305,7 @@ static int render(U32 prog, unsigned char *res, int trials, char *info)
     for (int u = 0; u < nu; ++u) {
         char name[96]; int len = 0, size = 0; U32 type = 0;
         p_gau(prog, u, sizeof(name), &len, &size, &type, name);
-        if ((type == 0x8b5e || type == 0x8d66) && ns < 16) { int k = 0; while (name[k]) { snames[ns][k] = name[k]; k++; } snames[ns][k] = 0; ns++; }
+        if ((type == 0x8b5e || type == 0x8d66 || type == 0x8dd2 || type == 0x8dca) && ns < 16) { int k = 0; while (name[k]) { snames[ns][k] = name[k]; k++; } snames[ns][k] = 0; ns++; }
     }
     for (int i = 0; i < ns; ++i) for (int j = i + 1; j < ns; ++j) if (strcmp(snames[j], snames[i]) < 0) { char tmp[96]; for (int k = 0; k < 96; ++k) { tmp[k] = snames[i][k]; snames[i][k] = snames[j][k]; snames[j][k] = tmp[k]; } }
     for (int t = 0; t < trials; ++t) {
@@ -318,6 +319,7 @@ static int render(U32 prog, unsigned char *res, int trials, char *info)
             if (type == 0x8b5e || type == 0x8d66) {
                 { int ui = 0; for (int i = 0; i < ns; ++i) if (!strcmp(snames[i], name)) ui = i; unit = ui; }
                 p_uni1i(loc, unit);
+                if (type == 0x8dd2 || type == 0x8dca) { p_activeTex(0x84c0 + unit); p_texImg(0x0de1, 0, type == 0x8dd2 ? 0x8d7c : 0x8d8e, 16, 16, 0, 0x8d99, 0x1401, tex_data[unit]); p_texPar(0x0de1, 0x2801, 0x2600); p_texPar(0x0de1, 0x2800, 0x2600); }
                 unit++; continue;
             }
             int comps = 1; int kind = 0; /* 0 float 1 int 2 uint */
@@ -325,6 +327,7 @@ static int render(U32 prog, unsigned char *res, int trials, char *info)
             case 0x1406: comps = 1; kind = 0; break; case 0x8b50: comps = 2; kind = 0; break; case 0x8b51: comps = 3; kind = 0; break; case 0x8b52: comps = 4; kind = 0; break;
             case 0x1404: comps = 1; kind = 1; break; case 0x8b53: comps = 2; kind = 1; break; case 0x8b54: comps = 3; kind = 1; break; case 0x8b55: comps = 4; kind = 1; break;
             case 0x1405: comps = 1; kind = 2; break; case 0x8dc6: comps = 2; kind = 2; break; case 0x8dc7: comps = 3; kind = 2; break; case 0x8dc8: comps = 4; kind = 2; break;
+            case 0x8b5a: case 0x8b5b: case 0x8b5c: { int cc = type == 0x8b5a ? 4 : type == 0x8b5b ? 9 : 16; float mv[64]; int nn = cc * size; if (nn > 64) nn = 64; for (int k = 0; k < nn; ++k) { unsigned r = nrand(&s); mv[k] = ((r >> 2) & 0xffff) / 65535.0f * 2.0f - 0.5f; } if (type == 0x8b5a) p_um2(loc, size, 0, mv); else if (type == 0x8b5b) p_um3(loc, size, 0, mv); else p_um4(loc, size, 0, mv); continue; }
             default: snprintf(info, 64, "type0x%x", type); continue; }
             float fv[64]; int iv[64]; unsigned uv[64]; int n = comps * size; if (n > 64) n = 64;
             for (int k = 0; k < n; ++k) {
@@ -332,6 +335,7 @@ static int render(U32 prog, unsigned char *res, int trials, char *info)
                 static const float pk[] = {0.0f,0.25f,0.5f,1.0f,2.0f,3.0f,-1.0f,8.0f,0.0625f,0.125f,0.75f,16.0f};
                 if (UMODE == 3) { int z = 1; { const char *o = ONLY; int q = 0; while (o[q] && name[q] == o[q]) q++; z = !(o[q] == 0 && name[q] == 0); } fv[k] = z ? 0.0f : 1.0f; iv[k] = z ? 0 : 1; uv[k] = iv[k]; continue; }
                 if (UMODE == 1) { fv[k] = 0.0f; iv[k] = 0; uv[k] = 0; continue; } if (UMODE == 2) { fv[k] = 1.0f; iv[k] = 1; uv[k] = 1; continue; }
+                if (SANE) { if (kind == 0) fv[k] = 0.25f + ((r >> 2) & 0xffff) / 65535.0f * (((r >> 20) & 3) == 0 ? 32.0f : 3.0f); else if (kind == 1) iv[k] = 1 + (int)((r >> 2) % 16); else uv[k] = 1 + (r >> 2) % 16; continue; }
                 if (kind == 0) fv[k] = ((r & 3) == 0) ? pk[(r >> 2) % 12] : ((r >> 2) & 0xffff) / 65535.0f * (((r >> 20) & 3) == 0 ? 64.0f : 4.0f);
                 else if (kind == 1) iv[k] = (int)((r >> 2) % 17) - (((r >> 12) & 7) == 0 ? 4 : 0);
                 else uv[k] = (r >> 2) % 17;
@@ -391,7 +395,7 @@ __attribute__((constructor)) static void pixel_run(void)
     L(p_getloc,"glGetUniformLocation"); L(p_uni1i,"glUniform1i"); L(p_enablev,"glEnableVertexAttribArray"); L(p_vattrptr,"glVertexAttribPointer");
     L(p_draw,"glDrawArrays"); L(p_readpix,"glReadPixels"); L(p_err,"glGetError"); L(p_clear,"glClear"); L(p_clearcolor,"glClearColor"); L(p_disable,"glDisable");
     L(p_getattr,"glGetAttribLocation"); L(p_progbin,"glProgramBinary"); L(p_finish,"glFinish");
-    L(p_gau,"glGetActiveUniform");
+    L(p_gau,"glGetActiveUniform"); L(p_um2,"glUniformMatrix2fv"); L(p_um3,"glUniformMatrix3fv"); L(p_um4,"glUniformMatrix4fv");
     L(p_u1fv,"glUniform1fv"); L(p_u2fv,"glUniform2fv"); L(p_u3fv,"glUniform3fv"); L(p_u4fv,"glUniform4fv");
     L(p_u1iv,"glUniform1iv"); L(p_u2iv,"glUniform2iv"); L(p_u3iv,"glUniform3iv"); L(p_u4iv,"glUniform4iv");
 #if CTX_VER >= 3

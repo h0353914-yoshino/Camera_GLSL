@@ -1,10 +1,12 @@
-#version 100
-#extension GL_OES_EGL_image_external : require
+#version 300 es
+#extension GL_OES_EGL_image_external_essl3 : require
+precision highp int;
 precision highp float;
 
 uniform highp samplerExternalOES texUnit0;
 uniform highp vec2 pixSize;
-varying highp vec2 texCoord;
+in highp vec2 texCoord;
+out mediump vec4 fragColor;
 
 void main()
 {
@@ -58,31 +60,31 @@ void main()
     r1_x = r1_z;
     r1_y = r0_y;
     r1_z = r0_x;
-    sample10 = texture2D(texUnit0, vec2(r0_x, r0_y));
+    sample10 = texture(texUnit0, vec2(r0_x, r0_y));
     r2_x = sample10.x;
     r2_y = sample10.y;
     r2_z = sample10.z;
     r2_w = sample10.w;
     r4_x = 0.0;
-    sample13 = texture2D(texUnit0, vec2(r0_z, r0_w));
+    sample13 = texture(texUnit0, vec2(r0_z, r0_w));
     r0_x = sample13.x;
     r0_y = sample13.y;
     r0_z = sample13.z;
     r0_w = sample13.w;
-    sample15 = texture2D(texUnit0, vec2(r1_x, r1_y));
+    sample15 = texture(texUnit0, vec2(r1_x, r1_y));
     r3_x = sample15.x;
     r3_y = sample15.y;
     r3_z = sample15.z;
     r3_w = sample15.w;
     r4_x = 0.0;
-    sample17 = texture2D(texUnit0, vec2(r1_z, r1_w));
+    sample17 = texture(texUnit0, vec2(r1_z, r1_w));
     r1_x = sample17.x;
     r1_y = sample17.y;
     r1_z = sample17.z;
     r1_w = sample17.w;
     hr0_x = r4_x;
     r4_x = hr0_x;
-    hr0_x = hr0_x;
+    hr0_x = float(int(hr0_x) & int(1.0));
     p0 = hr0_x == 1.0;
     r4_y = 0.0 * r0_w;
     r4_z = 0.0 * r0_w;
@@ -180,5 +182,5 @@ void main()
     hr0_y = r0_y * 0.003921568859368563;
     hr0_z = r0_z * 0.003921568859368563;
     hr0_w = r0_w * 0.003921568859368563;
-    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+    fragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
 }

@@ -125,10 +125,10 @@ void main()
     r4_x = (r1_z > r1_w) ? 1.0 : 0.0;
     r4_y = (r0_x < 0.0) ? 1.0 : 0.0;
     r4_z = (r2_x < 0.0) ? 1.0 : 0.0;
-    r2_y = r2_y;
+    r2_y = float(int(r2_y) & int(r3_y));
     hr0_x = r4_x;
     r3_y = (r0_x > r2_x) ? 1.0 : 0.0;
-    r4_x = r4_y;
+    r4_x = float(int(r4_y) & int(r4_z));
     hr0_y = r2_y;
     hr0_x = hr0_x + -1.0;
     hr0_z = r3_y;

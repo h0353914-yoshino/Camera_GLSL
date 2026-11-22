@@ -178,10 +178,10 @@ void main()
     r4_z = (r1_z > r3_z) ? 1.0 : 0.0;
     r4_w = (r1_w < 0.0) ? 1.0 : 0.0;
     r5_x = (r0_x < 0.0) ? 1.0 : 0.0;
-    r4_x = r4_x;
+    r4_x = float(int(r4_x) & int(r4_y));
     hr0_x = r4_z;
     r4_y = (r1_w > r0_x) ? 1.0 : 0.0;
-    r4_z = r4_w;
+    r4_z = float(int(r4_w) & int(r5_x));
     hr0_y = r4_x;
     hr0_x = hr0_x + -1.0;
     hr0_z = r4_y;

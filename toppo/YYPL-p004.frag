@@ -1,5 +1,6 @@
-#version 100
-#extension GL_OES_EGL_image_external : require
+#version 300 es
+#extension GL_OES_EGL_image_external_essl3 : require
+precision highp int;
 precision highp float;
 
 uniform highp samplerExternalOES texUnit1;
@@ -7,7 +8,8 @@ uniform highp samplerExternalOES texUnit2;
 uniform highp samplerExternalOES texUnit3;
 uniform highp vec4 param;
 uniform highp vec4 beta_param;
-varying highp vec2 texCoord;
+in highp vec2 texCoord;
+out mediump vec4 fragColor;
 
 void main()
 {
@@ -50,12 +52,12 @@ void main()
     highp float r6_x;
     param;
     beta_param;
-    samplePF0 = texture2D(texUnit2, texCoord.xy);
+    samplePF0 = texture(texUnit2, texCoord.xy);
     r0_z = samplePF0.x;
     r0_w = samplePF0.y;
     r1_x = samplePF0.z;
     r1_y = samplePF0.w;
-    samplePF1 = texture2D(texUnit1, texCoord.xy);
+    samplePF1 = texture(texUnit1, texCoord.xy);
     r1_z = samplePF1.x;
     r1_w = samplePF1.y;
     r2_x = samplePF1.z;
@@ -77,24 +79,24 @@ void main()
     r3_z = r4_y;
     r3_w = r2_w;
     r6_x = 0.0;
-    sample19 = texture2D(texUnit3, vec2(r0_x, r0_y));
+    sample19 = texture(texUnit3, vec2(r0_x, r0_y));
     r4_x = sample19.x;
     r4_y = sample19.y;
     r4_z = sample19.z;
     r4_w = sample19.w;
-    sample21 = texture2D(texUnit3, vec2(r3_x, r3_y));
+    sample21 = texture(texUnit3, vec2(r3_x, r3_y));
     r5_x = sample21.x;
     r5_y = sample21.y;
     r5_z = sample21.z;
     r5_w = sample21.w;
     r0_x = 0.0;
-    sample24 = texture2D(texUnit3, vec2(r3_z, r3_w));
+    sample24 = texture(texUnit3, vec2(r3_z, r3_w));
     r3_x = sample24.x;
     r3_y = sample24.y;
     r3_z = sample24.z;
     r3_w = sample24.w;
     hr0_x = r6_x;
-    sample26 = texture2D(texUnit3, vec2(r2_z, r2_w));
+    sample26 = texture(texUnit3, vec2(r2_z, r2_w));
     r2_z = sample26.x;
     r2_w = sample26.y;
     r3_x = sample26.z;
@@ -102,7 +104,7 @@ void main()
     r0_x = 0.0;
     r0_y = 1.0;
     r2_z = hr0_x;
-    hr0_x = hr0_x;
+    hr0_x = float(int(hr0_x) & int(1.0));
     r0_y = 0.0;
     p0 = hr0_x == 1.0;
     r2_w = 0.0 * r2_y;
@@ -191,5 +193,5 @@ void main()
     hr0_y = r0_z * 0.003921568859368563;
     hr0_z = r0_w * 0.003921568859368563;
     hr0_w = r0_x * 0.003921568859368563;
-    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+    fragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
 }

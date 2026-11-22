@@ -166,10 +166,10 @@ void main()
     r3_z = (r1_w > r1_z) ? 1.0 : 0.0;
     r4_x = (r2_x < 0.0) ? 1.0 : 0.0;
     r4_z = (r0_x < 0.0) ? 1.0 : 0.0;
-    r3_x = r3_x;
+    r3_x = float(int(r3_x) & int(r3_y));
     hr0_x = r3_z;
     r3_y = (r2_x > r0_x) ? 1.0 : 0.0;
-    r3_z = r4_x;
+    r3_z = float(int(r4_x) & int(r4_z));
     hr0_y = r3_x;
     hr0_x = hr0_x + -1.0;
     hr0_z = r3_y;

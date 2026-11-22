@@ -1,10 +1,12 @@
-#version 100
-#extension GL_OES_EGL_image_external : require
+#version 300 es
+#extension GL_OES_EGL_image_external_essl3 : require
+precision highp int;
 precision highp float;
 
 uniform highp samplerExternalOES texUnit0;
 uniform highp vec4 pixSize;
-varying highp vec2 texCoord;
+in highp vec2 texCoord;
+out mediump vec4 fragColor;
 
 void main()
 {
@@ -179,22 +181,22 @@ void main()
         r2_w = r7_w;
         r4_w = r7_w;
         r6_w = r7_w;
-        sample47 = texture2D(texUnit0, vec2(r0_x, r0_y));
+        sample47 = texture(texUnit0, vec2(r0_x, r0_y));
         r8_x = sample47.x;
         r8_y = sample47.y;
         r8_z = sample47.z;
         r8_w = sample47.w;
-        sample48 = texture2D(texUnit0, vec2(r2_x, r2_y));
+        sample48 = texture(texUnit0, vec2(r2_x, r2_y));
         r9_x = sample48.x;
         r9_y = sample48.y;
         r9_z = sample48.z;
         r9_w = sample48.w;
-        sample50 = texture2D(texUnit0, vec2(r4_x, r4_y));
+        sample50 = texture(texUnit0, vec2(r4_x, r4_y));
         r10_x = sample50.x;
         r10_y = sample50.y;
         r10_z = sample50.z;
         r10_w = sample50.w;
-        sample52 = texture2D(texUnit0, vec2(r6_x, r6_y));
+        sample52 = texture(texUnit0, vec2(r6_x, r6_y));
         r11_x = sample52.x;
         r11_y = sample52.y;
         r11_z = sample52.z;
@@ -203,22 +205,22 @@ void main()
         r3_y = r7_w;
         r5_y = r7_w;
         r7_y = r7_w;
-        sample57 = texture2D(texUnit0, vec2(r0_z, r0_w));
+        sample57 = texture(texUnit0, vec2(r0_z, r0_w));
         r12_x = sample57.x;
         r12_y = sample57.y;
         r12_z = sample57.z;
         r12_w = sample57.w;
-        sample58 = texture2D(texUnit0, vec2(r2_z, r2_w));
+        sample58 = texture(texUnit0, vec2(r2_z, r2_w));
         r13_x = sample58.x;
         r13_y = sample58.y;
         r13_z = sample58.z;
         r13_w = sample58.w;
-        sample59 = texture2D(texUnit0, vec2(r4_z, r4_w));
+        sample59 = texture(texUnit0, vec2(r4_z, r4_w));
         r14_x = sample59.x;
         r14_y = sample59.y;
         r14_z = sample59.z;
         r14_w = sample59.w;
-        sample60 = texture2D(texUnit0, vec2(r6_z, r6_w));
+        sample60 = texture(texUnit0, vec2(r6_z, r6_w));
         r15_x = sample60.x;
         r15_y = sample60.y;
         r15_z = sample60.z;
@@ -226,45 +228,45 @@ void main()
         r1_w = r7_w;
         r3_w = r7_w;
         r5_w = r7_w;
-        sample64 = texture2D(texUnit0, vec2(r1_x, r1_y));
+        sample64 = texture(texUnit0, vec2(r1_x, r1_y));
         r16_x = sample64.x;
         r16_y = sample64.y;
         r16_z = sample64.z;
         r16_w = sample64.w;
-        sample66 = texture2D(texUnit0, vec2(r3_x, r3_y));
+        sample66 = texture(texUnit0, vec2(r3_x, r3_y));
         r17_x = sample66.x;
         r17_y = sample66.y;
         r17_z = sample66.z;
         r17_w = sample66.w;
-        sample68 = texture2D(texUnit0, vec2(r5_x, r5_y));
+        sample68 = texture(texUnit0, vec2(r5_x, r5_y));
         r18_x = sample68.x;
         r18_y = sample68.y;
         r18_z = sample68.z;
         r18_w = sample68.w;
-        sample70 = texture2D(texUnit0, vec2(r7_x, r7_y));
+        sample70 = texture(texUnit0, vec2(r7_x, r7_y));
         r19_x = sample70.x;
         r19_y = sample70.y;
         r19_z = sample70.z;
         r19_w = sample70.w;
-        sample72 = texture2D(texUnit0, vec2(r1_z, r1_w));
+        sample72 = texture(texUnit0, vec2(r1_z, r1_w));
         r20_x = sample72.x;
         r20_y = sample72.y;
         r20_z = sample72.z;
         r20_w = sample72.w;
-        sample74 = texture2D(texUnit0, vec2(r3_z, r3_w));
+        sample74 = texture(texUnit0, vec2(r3_z, r3_w));
         r21_x = sample74.x;
         r21_y = sample74.y;
         r21_z = sample74.z;
         r21_w = sample74.w;
-        sample76 = texture2D(texUnit0, vec2(r5_z, r5_w));
+        sample76 = texture(texUnit0, vec2(r5_z, r5_w));
         r22_x = sample76.x;
         r22_y = sample76.y;
         r22_z = sample76.z;
         r22_w = sample76.w;
         hr0_y = r23_x;
         r0_y = hr0_y;
-        hr0_y = hr0_y;
-        sample81 = texture2D(texUnit0, vec2(r7_z, r7_w));
+        hr0_y = float(int(hr0_y) & int(1.0));
+        sample81 = texture(texUnit0, vec2(r7_z, r7_w));
         r23_x = sample81.x;
         r23_y = sample81.y;
         r23_z = sample81.z;
@@ -391,5 +393,5 @@ void main()
     hr0_y = r0_z * 0.003921568859368563;
     hr0_z = r0_y * 0.003921568859368563;
     hr0_w = r0_w * 0.003921568859368563;
-    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+    fragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
 }

@@ -142,6 +142,8 @@ class Lifter:
                 raise ValueError('predicate source')
             else:
                 val = self.var(kind, idx)
+        elif re.fullmatch(r'-?\d+', tok):
+            val = tok + '.0'
         else:
             m = re.fullmatch(r'h?\((-?[\d.]+(?:e[-+]?\d+)?)\)', tok)
             assert m, tok
@@ -160,7 +162,7 @@ class Lifter:
         'cov.f32f16': '{0}', 'cov.f16f32': '{0}', 'mov.f16f16': '{0}', 'mov.f32f32': '{0}',
         'cov.s16s32': '{0}', 'cov.s32s16': '{0}', 'cov.u16u32': '{0}', 'mov.s32s32': '{0}',
     }
-    CMP = {'cmps.s.gt': '>', 'cmps.s.lt': '<', 'cmps.s.eq': '==', 'cmps.s.ge': '>=', 'cmps.s.le': '<=', 'cmps.s.ne': '!=', 'cmps.f.gt': '>', 'cmps.f.lt': '<', 'cmps.f.eq': '==', 'cmps.f.ge': '>=', 'cmps.f.le': '<=', 'cmps.f.ne': '!='}
+    CMP = {'cmps.u.gt': '>', 'cmps.u.lt': '<', 'cmps.u.ge': '>=', 'cmps.u.le': '<=', 'cmps.u.eq': '==', 'cmps.u.ne': '!=', 'cmps.s.gt': '>', 'cmps.s.lt': '<', 'cmps.s.eq': '==', 'cmps.s.ge': '>=', 'cmps.s.le': '<=', 'cmps.s.ne': '!=', 'cmps.f.gt': '>', 'cmps.f.lt': '<', 'cmps.f.eq': '==', 'cmps.f.ge': '>=', 'cmps.f.le': '<=', 'cmps.f.ne': '!='}
 
     def emit_ins(self, pc, out, ind):
         flags, op, rest = self.ins[pc]
@@ -191,7 +193,7 @@ class Lifter:
             for i, ch in enumerate(mask):
                 out.append(f'{pad}{self.var(dk, d0 + SW.index(ch))} = {sample}.{ch};')
             return
-        if op in self.CMP or op in self.FUN or op in ('sel.b32', 'sel.f16', 'sel.s32', 'sel.s16', 'sel.b16'):
+        if op in self.CMP or op in self.FUN or op in ('sel.b32', 'sel.f16', 'sel.f32', 'sel.s32', 'sel.s16', 'sel.b16'):
             lanes = int(re.search(r'\(rpt(\d)\)', flags)[1]) + 1 if '(rpt' in flags else 1
             dst, *srcs = [s.strip() for s in re.split(r',\s*(?![^()]*\))', rest)]
             dm = re.match(r'((?:\((?:ei|even|sat)\))*)(hr|r|p)(\d+)\.([xyzw])$', dst)
@@ -207,7 +209,7 @@ class Lifter:
                     else:
                         out.append(f'{pad}{self.var(kind, didx + lane)} = ({expr}) ? 1.0 : 0.0;')
                     continue
-                if op == 'sel.f16':
+                if op in ('sel.f16', 'sel.f32'):
                     expr = f'({vals[1]} < 0.0) ? {vals[2]} : {vals[0]}'
                 elif op in ('sel.s32', 'sel.s16'):
                     expr = f'({vals[1]} > 0.0) ? {vals[0]} : {vals[2]}'
@@ -273,22 +275,34 @@ class Lifter:
                     raise ValueError(f'未結構化的 jump @{pc} → {t}')
                 pc += 1
                 continue
-            if op in ('brac.0', 'brac.1') and re.fullmatch(r'#l\d+', rest.strip()):
+            if re.fullmatch(r'brac\.\d+', op) and re.fullmatch(r'#l\d+', rest.strip()):
                 t = self.labels[rest.strip()[1:]]
                 last = self.ins[t - 1]
-                assert last[1] == 'jump', f'brac 無 else @{pc}'
+                if last[1] != 'jump':
+                    self.structure(pc + 1, t, out, ind, loop_end, loops)
+                    pc = t
+                    continue
                 m_end = self.target(last[2])
                 self.structure(pc + 1, t - 1, out, ind, loop_end, loops)
                 pc = m_end
                 continue
-            if op in ('br', 'brac.0', 'brac.1'):
-                m = re.match(r'(!?)p0\.([xy]), #(l\d+)$', rest)
-                cond, pch, label = m.groups()
-                pv = 'p0' if pch == 'x' else 'p1'
-                t = self.labels[label]
-                # br p0.x → p0 為真時跳走；fallthrough 於 p0 為假時執行
-                take = pv if not cond else '!' + pv
-                fall = '!' + pv if not cond else pv
+            if op in ('br', 'brac.0', 'brac.1', 'brao', 'braa'):
+                if op in ('brao', 'braa'):
+                    m2 = re.match(r'(!?)p0\.([xy]), (!?)p0\.([xy]), #(l\d+)$', rest)
+                    c1, h1, c2, h2, label = m2.groups()
+                    a = ('!' if c1 else '') + ('p0' if h1 == 'x' else 'p1')
+                    b = ('!' if c2 else '') + ('p0' if h2 == 'x' else 'p1')
+                    take = f'({a} {"||" if op == "brao" else "&&"} {b})'
+                    fall = f'!{take}'
+                    t = self.labels[label]
+                else:
+                    m = re.match(r'(!?)p0\.([xy]), #(l\d+)$', rest)
+                    cond, pch, label = m.groups()
+                    pv = 'p0' if pch == 'x' else 'p1'
+                    t = self.labels[label]
+                    # br p0.x → p0 為真時跳走；fallthrough 於 p0 為假時執行
+                    take = pv if not cond else '!' + pv
+                    fall = '!' + pv if not cond else pv
                 if loop_end is not None and t >= loop_end:
                     out.append(f'{pad}if ({take}) break;')
                     pc += 1

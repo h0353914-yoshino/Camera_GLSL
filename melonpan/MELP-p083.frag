@@ -728,5 +728,5 @@ void main()
     r2_z = max(r0_x, r1_x);
     r2_w = min(r0_w, r2_x);
     r3_x = max(r0_z, r1_z);
-    fragColor = vec4(r2_y, r2_z, r2_w, r2_x);
+    fragColor = vec4(r2_y, r2_z, r2_w, r3_x);
 }

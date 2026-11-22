@@ -3,9 +3,11 @@ sys.path.insert(0,'/home/h/tmp/SemcCameraUI/.tmp/ir3'); sys.path.insert(0,'/home
 import run2, ir3_to_es100_m as M
 R=run2.ROOT+'/'
 OUT=sys.argv[1]
-gen,rows=pickle.load(open(R+'run2_all8.pkl','rb'))
+gen,rows=pickle.load(open(R+'run2_all9.pkl','rb'))
 good=pickle.load(open(R+'perm2_good.pkl','rb'))
-passed=sorted(n for n,v in rows.items() if v[0]=='PASS')
+sane=pickle.load(open(R+'sane_pass.pkl','rb'))
+passed=sorted(n for n,v in rows.items() if v[0]=='PASS' or n in sane)
+unver=sorted(n for n,v in rows.items() if v[0]!='PASS' and n not in sane)
 man=[]
 vseen={}
 for n in passed:
@@ -20,4 +22,17 @@ for n in passed:
     open(f'{OUT}/{fn}','w').write(fs)
     man.append(f'{m}-{h}-p{p:03}\t{"gles3" if L.es3 else "gles2"}\t{vn}\t{fn}')
 open(f'{OUT}/manifest_rsc.tsv','w').write('\n'.join(man)+'\n')
+uman=[]
+for n in unver:
+    m,hp=n.rsplit('_',1); h,p=hp.split('-p'); p=int(p)
+    try:
+        L=M.LifterM(n,order=good.get(n)); fs=L.generate(); vs=L.vertex()
+    except Exception as e:
+        continue
+    d=f'{OUT}/unverified/{m}'; os.makedirs(d,exist_ok=True)
+    vh=hashlib.sha1(vs.encode()).hexdigest()[:8]; vn=f'unverified/{m}/vertex_{vh}.vert'
+    open(f'{OUT}/{vn}','w').write(vs)
+    fn=f'unverified/{m}/{h}-p{p:03}.frag'; open(f'{OUT}/{fn}','w').write(fs)
+    uman.append(f'{m}-{h}-p{p:03}\t{"gles3" if L.es3 else "gles2"}\t{vn}\t{fn}')
+open(f'{OUT}/manifest_rsc_unverified.tsv','w').write('\n'.join(uman)+'\n')
 print(len(man),'exported;',len(vseen),'vertex files')

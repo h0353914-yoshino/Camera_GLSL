@@ -90,6 +90,7 @@ class LifterM(R.LifterR):
         'cov.s32f32': '{0}', 'cov.s16f16': '{0}', 'cov.u32u16': '{0}', 'cov.u16f16': '{0}', 'cov.u32f32': '{0}',
         'cov.s16f32': '{0}', 'cov.u16f32': '{0}', 'cov.s32u16': '{0}', 'cov.u16u32': '{0}',
         'mov.s16s16': '{0}', 'mov.u16u16': '{0}', 'mov.u32u32': '{0}', 'mov.f32f16': '{0}',
+        'madsh.m16': '{2}', 'madsh.u16': '{2}', 'cov.f16u16': 'float(int({0}))', 'cov.f32u16': 'float(int({0}))',
         'absneg.s': '{0}', 'ashr.b': 'floor({0} / exp2({1}))', 'not.b': '(-{0} - 1.0)', 'min.s': 'min({0}, {1})', 'max.s': 'max({0}, {1})',
         'min.u': 'min({0}, {1})', 'max.u': 'max({0}, {1})', 'mull.u': '{0} * {1}', 'rndne.f': 'rndne({0})', 'and.b': '{0}',
         'or.b': 'float(int({0}) | int({1}))', 'xor.b': 'float(int({0}) ^ int({1}))',
@@ -226,6 +227,26 @@ class LifterM(R.LifterR):
             for ch in mask:
                 out.append(f'{pad}{self.var(dk, d0 + SW.index(ch))} = {sample}.{ch};')
             return
+        if op in ('and.b', 'or.b', 'xor.b', 'not.b'):
+            lanes = int(re.search(r'\(rpt(\d)\)', flags)[1]) + 1 if '(rpt' in flags else 1
+            parts = [x.strip() for x in re.split(r',\s*(?![^()]*\))', rest)]
+            dm = re.match(r'((?:\((?:ei|even|sat)\))*)(hr|r|p)(\d+)\.([xyzw])$', parts[0])
+            _, dk, dg, dc = dm.groups()
+            d0 = 4 * int(dg) + SW.index(dc)
+            sym = {'and.b': '&', 'or.b': '|', 'xor.b': '^'}.get(op)
+            for lane in range(lanes):
+                vals = []
+                for t in parts[1:]:
+                    bn = '(neg)' in t
+                    v = self.src(t.replace('(neg)', ''), lane)
+                    v = f'int({v})'
+                    vals.append(f'(~{v})' if bn else v)
+                expr = f'float(~{vals[0]})' if op == 'not.b' else f'float({vals[0]} {sym} {vals[1]})'
+                if dk == 'p':
+                    out.append(f'{pad}p{d0 + lane} = ({expr} != 0.0);')
+                else:
+                    out.append(f'{pad}{self.var(dk, d0 + lane)} = {expr};')
+            return
         if op == 'getbit.b':
             return R.LifterR.emit_ins(self, pc, out, ind)
         return R.LifterR.emit_ins(self, pc, out, ind)
@@ -242,13 +263,29 @@ class LifterM(R.LifterR):
             for b in range(4):
                 if mask & (1 << b):
                     body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = samplePF{i}.{SW[b]};')
-        self.structure(0, len(self.ins), body, 1)
+        try:
+            self.structure(0, len(self.ins), body, 1)
+        except (AssertionError, ValueError) as e:
+            if not any(k in str(e) for k in ('跳躍', '未結構化', '無 else')):
+                raise
+            body = [l for l in body if 'samplePF' in l or l.startswith('    hr') and False]
+            body = []
+            for i, (vary, slot, tex, dest, mask, kind, *_) in enumerate(self.prefetch):
+                fe = f'texture2D({self.sampler(slot)}, texCoord.xy)'
+                if (self.stypes.get(self.sampler(slot)) or '')[:1] in ('u', 'i'):
+                    fe = f'vec4({fe})'
+                body.append(f'    samplePF{i} = {fe};')
+                for b in range(4):
+                    if mask & (1 << b):
+                        body.append(f'    {self.var("hr" if kind == 0 else "r", dest + b)} = samplePF{i}.{SW[b]};')
+            self.force_es3 = True
+            self.flat(body)
         ok = 'hr' if self.out_half else 'r'
-        oreg = [self.var(ok, self.outinfo[3] * 4 + c) for c in self.outinfo[6:10]]
+        oreg = [self.var(ok, self.outinfo[3] * 4 + self.outinfo[6] + i) for i in range(4)]
         decl = [f'    {"mediump" if k == "hr" else "highp"} float {n};' for k, n in sorted(self.used)]
         if self.uses_a0:
             decl.append('    highp float a0_x;')
-        self.es3 = any(t[0] in 'iu' for t, _ in self.utypes.values() if t != 'mat2') or any(t in ('isampler2D', 'usampler2D') for t in self.stypes.values()) or not self.out_half or any(o in ('or.b', 'xor.b') for _, o, _ in self.ins) or getattr(self, 'force_es3', False)
+        self.es3 = any(t[0] in 'iu' for t, _ in self.utypes.values() if t != 'mat2') or any(t in ('isampler2D', 'usampler2D') for t in self.stypes.values()) or not self.out_half or any(o in ('and.b', 'or.b', 'xor.b', 'not.b') for _, o, _ in self.ins) or getattr(self, 'force_es3', False)
         head = ['#version 300 es' if self.es3 else '#version 100', 'precision highp float;', '']
         if self.es3: head.insert(1, 'precision highp int;')
         if any(t == 'samplerExternalOES' for t in self.stypes.values()):
@@ -272,6 +309,67 @@ class LifterM(R.LifterR):
         if self.es3:
             text = text.replace('texture2D(', 'texture(')
         return text
+
+    def flat(self, out):
+        ins, labels = self.ins, self.labels
+        starts = {0}
+        for pc, (f, op, rest) in enumerate(ins):
+            if op in ('br', 'brao', 'braa', 'jump') or re.fullmatch(r'brac\.\d+', op):
+                starts.add(pc + 1)
+                m = re.search(r'#(l\d+)$', rest)
+                if m:
+                    starts.add(labels[m[1]])
+        for t in labels.values():
+            starts.add(t)
+        starts = sorted(x for x in starts if x < len(ins))
+        nxt = {a: b for a, b in zip(starts, starts[1:] + [len(ins)])}
+        out.append('    int blk = 0;')
+        out.append('    while (true)')
+        out.append('    {')
+        out.append('        switch (blk)')
+        out.append('        {')
+        for st in starts:
+            out.append(f'        case {st}:')
+            out.append('        {')
+            end = nxt[st]
+            terminated = False
+            for pc in range(st, end):
+                f, op, rest = ins[pc]
+                if op == 'end':
+                    out.append('            blk = -1; break;')
+                    terminated = True
+                    break
+                if op == 'jump':
+                    out.append(f'            blk = {labels[re.search(r"#(l\d+)$", rest)[1]]}; break;')
+                    terminated = True
+                    break
+                if re.fullmatch(r'brac\.\d+', op) and re.fullmatch(r'#l\d+', rest.strip()):
+                    continue
+                if op in ('br', 'brao', 'braa'):
+                    if op == 'br':
+                        m = re.match(r'(!?)p0\.([xy]), #(l\d+)$', rest)
+                        take = ('!' if m[1] else '') + ('p0' if m[2] == 'x' else 'p1')
+                    else:
+                        m = re.match(r'(!?)p0\.([xy]), (!?)p0\.([xy]), #(l\d+)$', rest)
+                        a = ('!' if m[1] else '') + ('p0' if m[2] == 'x' else 'p1')
+                        b = ('!' if m[3] else '') + ('p0' if m[4] == 'x' else 'p1')
+                        take = f'({a} {"||" if op == "brao" else "&&"} {b})'
+                    out.append(f'            if ({take}) {{ blk = {labels[m[len(m.groups())]]}; break; }}')
+                    out.append(f'            blk = {pc + 1};')
+                    # 後續指令屬於下一個區塊
+                    terminated = True
+                    break
+                self.emit_ins(pc, out, 3)
+            if not terminated:
+                out.append(f'            blk = {end}; break;')
+            else:
+                pass
+            out.append('        }')
+            out.append('        break;')
+        out.append('        default: blk = -1; break;')
+        out.append('        }')
+        out.append('        if (blk < 0) break;')
+        out.append('    }')
 
     def vertex_code(self):
         from run_all import stage_code

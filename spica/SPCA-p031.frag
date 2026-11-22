@@ -138,5 +138,5 @@ void main()
     r0_z = min(r0_z, 9.18340949e-41);
     r0_w = min(r0_w, 9.18340949e-41);
     r1_x = min(r0_x, 9.18340949e-41);
-    fragColor = vec4(r0_y, r0_z, r0_w, r0_x);
+    fragColor = vec4(r0_y, r0_z, r0_w, r1_x);
 }

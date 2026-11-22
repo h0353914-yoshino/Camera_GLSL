@@ -323,5 +323,5 @@ void main()
     hr0_y = r0_x * 0.015625;
     hr0_w = hr0_z;
     hr1_x = hr0_z;
-    fragColor = vec4(hr0_y, hr0_z, hr0_w, hr0_x);
+    fragColor = vec4(hr0_y, hr0_z, hr0_w, hr1_x);
 }
