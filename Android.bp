@@ -65,3 +65,13 @@ cc_library_shared {
     ],
     local_include_dirs: ["."],
 }
+
+cc_library_shared {
+    name: "libsomc_canelersc",
+    defaults: ["somc_rsc_defaults"],
+    srcs: [
+        "src/libsomc_canelersc.c",
+        "src/libsomc_canelersc_res.S",
+    ],
+    local_include_dirs: ["."],
+}
