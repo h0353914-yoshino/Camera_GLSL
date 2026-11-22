@@ -6,8 +6,8 @@
 GLSL 用 .incbin 從 glsl/（Camera_GLSL 子模組）嵌入，長度由組譯器以標籤相減算出，
 所以只改 GLSL 內容不必重新產生；增減程式或改檔名才需要重跑。
 用法：python3 tools/rsc/gen_rsc.py <輸出目錄>
-在本倉庫根目錄執行；輸出的 .c／_res.S 提交到 vendor/sony/camera/rsc/src/。
-.incbin 路徑相對於 Camera_GLSL 的 lineage-24.0（子模組 rsc/glsl）。
+在本倉庫根目錄執行；輸出的 .c／_res.S 提交到 lineage-24.0 分支的 src/。
+.incbin 路徑相對於 lineage-24.0 分支根目錄（即 vendor/sony/camera 的子模組 rsc/glsl）。
 """
 import json, os, sys
 
