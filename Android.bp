@@ -35,3 +35,13 @@ cc_library_shared {
     ],
     local_include_dirs: ["."],
 }
+
+cc_library_shared {
+    name: "libsomc_melonpanrsc",
+    defaults: ["somc_rsc_defaults"],
+    srcs: [
+        "src/libsomc_melonpanrsc.c",
+        "src/libsomc_melonpanrsc_res.S",
+    ],
+    local_include_dirs: ["."],
+}
