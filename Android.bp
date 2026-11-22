@@ -25,3 +25,13 @@ cc_defaults {
     cflags: ["-O2"],
     ldflags: ["-nostdlib"],
 }
+
+cc_library_shared {
+    name: "libsomc_marblersc",
+    defaults: ["somc_rsc_defaults"],
+    srcs: [
+        "src/libsomc_marblersc.c",
+        "src/libsomc_marblersc_res.S",
+    ],
+    local_include_dirs: ["."],
+}

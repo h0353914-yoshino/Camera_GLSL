@@ -1,0 +1,72 @@
+#version 100
+precision highp float;
+
+uniform highp sampler2D texUnitCb;
+uniform highp vec4 params;
+uniform highp float pixWidth;
+varying highp vec2 texCoord;
+
+void main()
+{
+    bool p0;
+    bool p1;
+    highp vec4 sample17;
+    highp vec4 sample19;
+    highp vec4 sample21;
+    highp vec4 sample23;
+    mediump float hr0_w;
+    mediump float hr0_x;
+    mediump float hr0_y;
+    mediump float hr0_z;
+    highp float r0_w;
+    highp float r0_x;
+    highp float r0_y;
+    highp float r0_z;
+    highp float r1_w;
+    highp float r1_x;
+    highp float r1_y;
+    highp float r1_z;
+    highp float r2_x;
+    params;
+    pixWidth;
+    r0_z = texCoord.x;
+    r0_w = texCoord.y;
+    r0_x = pixWidth;
+    r0_y = params.y + r0_z;
+    r0_z = r0_w * params.x;
+    r0_w = (-1.5) * r0_x + r0_y;
+    r1_x = (-0.5) * r0_x + r0_y;
+    r1_y = 0.5 * r0_x + r0_y;
+    r0_x = 1.5 * r0_x + r0_y;
+    r0_y = r0_w * params.z;
+    r0_w = r1_x * params.z;
+    r1_x = r1_y * params.z;
+    r1_z = r0_z;
+    r1_y = r0_y;
+    r1_w = r0_w;
+    r2_x = r0_z;
+    r0_w = r1_x;
+    r1_x = r0_z;
+    r0_y = r0_x * params.z;
+    sample17 = texture2D(texUnitCb, vec2(r1_y, r1_z));
+    r1_y = sample17.z;
+    sample19 = texture2D(texUnitCb, vec2(r1_w, r2_x));
+    r1_z = sample19.z;
+    sample21 = texture2D(texUnitCb, vec2(r0_w, r1_x));
+    r0_w = sample21.z;
+    sample23 = texture2D(texUnitCb, vec2(r0_y, r0_z));
+    r0_z = sample23.z;
+    r0_x = 255.0 * r1_y + 0.5;
+    r0_y = 255.0 * r1_z + 0.5;
+    r0_w = 255.0 * r0_w + 0.5;
+    r0_z = 255.0 * r0_z + 0.5;
+    r0_x = floor(r0_x);
+    r0_y = floor(r0_y);
+    r0_w = floor(r0_w);
+    r0_z = floor(r0_z);
+    hr0_x = r0_x * 0.003921568859368563;
+    hr0_y = r0_y * 0.003921568859368563;
+    hr0_z = r0_w * 0.003921568859368563;
+    hr0_w = r0_z * 0.003921568859368563;
+    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+}

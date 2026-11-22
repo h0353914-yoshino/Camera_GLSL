@@ -1,0 +1,71 @@
+#version 100
+precision highp float;
+
+uniform highp sampler2D texYY1;
+uniform highp sampler2D texYY2;
+uniform highp sampler2D texMap1;
+uniform highp vec4 params;
+uniform highp vec4 mapOffset;
+uniform highp vec4 moduParams;
+varying highp vec2 texCoord;
+
+void main()
+{
+    bool p0;
+    bool p1;
+    highp vec4 sample11;
+    highp vec4 sample13;
+    highp vec4 sample15;
+    mediump float hr0_w;
+    mediump float hr0_x;
+    mediump float hr0_y;
+    mediump float hr0_z;
+    highp float r0_w;
+    highp float r0_x;
+    highp float r0_y;
+    highp float r0_z;
+    highp float r1_w;
+    highp float r1_x;
+    highp float r1_y;
+    highp float r1_z;
+    params;
+    mapOffset;
+    moduParams;
+    r0_z = texCoord.x;
+    r0_w = texCoord.y;
+    r0_x = params.y + r0_z;
+    r0_y = r0_z + 1.0;
+    r1_y = mapOffset.z * r0_w + mapOffset.y;
+    r0_z = r0_w * mapOffset.z;
+    r1_x = params.z * r0_x + mapOffset.x;
+    r1_z = r0_y * params.w;
+    r0_y = r0_x * params.z;
+    r1_w = r0_w;
+    sample11 = texture2D(texMap1, vec2(r1_x, r1_y));
+    r0_w = sample11.y;
+    sample13 = texture2D(texYY2, vec2(r0_y, r0_z));
+    r0_y = sample13.y;
+    sample15 = texture2D(texYY1, vec2(r1_z, r1_w));
+    r0_x = sample15.x;
+    r0_z = r0_w * 255.0;
+    r0_y = r0_y * 255.0;
+    r0_w = r0_z * moduParams.x;
+    r1_x = 255.0 * r0_x + (-r0_y);
+    r1_y = r0_z * moduParams.y;
+    r0_x = r0_x * 255.0;
+    r0_w = max(r0_w, abs(r1_x));
+    r0_w = min(r0_w, r1_y);
+    r0_w = (-moduParams.x) * r0_z + r0_w;
+    r0_w = moduParams.w * r0_w;
+    r0_z = moduParams.z * r0_z + (-r0_w);
+    r0_w = 1.0 - r0_z;
+    r0_y = r0_y * r0_z;
+    r0_x = r0_x * r0_w + r0_y;
+    r0_x = r0_x + 0.5;
+    r0_x = floor(r0_x);
+    hr0_x = r0_x * 0.003921568859368563;
+    hr0_y = hr0_x;
+    hr0_z = hr0_x;
+    hr0_w = hr0_x;
+    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+}
