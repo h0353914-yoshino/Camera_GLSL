@@ -1,0 +1,27 @@
+// 10 個 rsc 資源函式庫的替代品。
+//
+// 原廠 libsomc_<模組>rsc.so 裡的 Adreno 預編 shader 二進位與新版 GPU 驅動不相容
+// （glProgramBinary 被拒絕）。這裡改放還原出的 GLSL 原始碼，資源記錄旗標為 0，
+// 呼叫端（libsomc_<模組>.so）會直接交給 createProgram 編譯，不需要解密。
+// 對外介面（mangled 符號、holder 分派與 tag）與原廠一致。
+//
+// 本目錄是 Camera_GLSL 的 lineage-24.0（vendor/sony/camera 的子模組 rsc）：
+// GLSL 以 .incbin 嵌入，src/ 的 .c 與 _res.S 由 glsl-restore 分支 tools/rsc/gen_rsc.py 產生。
+// 只改 GLSL 內容不必重新產生；增減程式或改檔名才需要重跑。
+// 另外 6 個 rsc 函式庫（buttercake、cheesescone、dars、pretzchoco、shortcake、sumomo）
+// 沒有 GL shader 需要處理，仍使用 yoshino-common 的原廠 blob。
+
+cc_defaults {
+    name: "somc_rsc_defaults",
+    vendor: true,
+    compile_multilib: "32",
+    nocrt: true,
+    system_shared_libs: [],
+    stl: "none",
+    no_libcrt: true,
+    sanitize: {
+        never: true,
+    },
+    cflags: ["-O2"],
+    ldflags: ["-nostdlib"],
+}
