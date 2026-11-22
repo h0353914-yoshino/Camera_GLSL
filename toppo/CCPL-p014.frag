@@ -1,0 +1,78 @@
+#version 100
+precision highp float;
+
+uniform highp sampler2D texUnit1;
+uniform highp sampler2D texUnit2;
+uniform highp vec4 param;
+varying highp vec2 texCoord;
+
+void main()
+{
+    bool p0;
+    bool p1;
+    highp vec4 sample10;
+    highp vec4 sample12;
+    highp vec4 sample13;
+    highp vec4 sample14;
+    mediump float hr0_w;
+    mediump float hr0_x;
+    mediump float hr0_y;
+    mediump float hr0_z;
+    highp float r0_w;
+    highp float r0_x;
+    highp float r0_y;
+    highp float r0_z;
+    highp float r1_w;
+    highp float r1_x;
+    highp float r1_y;
+    highp float r1_z;
+    highp float r2_w;
+    highp float r2_x;
+    highp float r2_y;
+    highp float r3_x;
+    highp float r3_z;
+    param;
+    r0_z = param.y;
+    r0_w = texCoord.x;
+    r1_x = texCoord.y;
+    r0_x = param.x;
+    r0_y = (-0.25) * r0_z + r0_w;
+    r1_y = r1_x;
+    r0_z = 0.25 * r0_z + r0_w;
+    r0_w = r1_x + 0.0;
+    r1_x = r0_y;
+    r0_x = 1.0 - r0_x;
+    sample10 = texture2D(texUnit2, vec2(r0_z, r0_w));
+    r1_z = sample10.y;
+    r2_x = sample10.w;
+    sample12 = texture2D(texUnit2, vec2(r1_x, r1_y));
+    r2_y = sample12.y;
+    r2_w = sample12.w;
+    sample13 = texture2D(texUnit1, vec2(r1_x, r1_y));
+    r3_x = sample13.y;
+    r3_z = sample13.w;
+    sample14 = texture2D(texUnit1, vec2(r0_z, r0_w));
+    r0_y = sample14.y;
+    r0_w = sample14.w;
+    r0_z = r1_z + -0.501960813999176;
+    r1_x = r2_y + -0.501960813999176;
+    r1_y = r2_w + -0.501960813999176;
+    r1_z = r2_x + -0.501960813999176;
+    r1_w = r3_x + -0.501960813999176;
+    r2_x = r3_z + -0.501960813999176;
+    r0_y = r0_y + -0.501960813999176;
+    r0_w = r0_w + -0.501960813999176;
+    r1_x = r1_x * param.x;
+    r1_y = r1_y * param.x;
+    r0_z = r0_z * param.x;
+    r1_z = r1_z * param.x;
+    r1_x = r0_x * r1_w + r1_x;
+    r1_y = r0_x * r2_x + r1_y;
+    r0_y = r0_x * r0_y + r0_z;
+    r0_x = r0_x * r0_w + r1_z;
+    hr0_x = r1_x + 0.501960813999176;
+    hr0_y = r1_y + 0.501960813999176;
+    hr0_z = r0_y + 0.501960813999176;
+    hr0_w = r0_x + 0.501960813999176;
+    gl_FragColor = vec4(hr0_x, hr0_y, hr0_z, hr0_w);
+}

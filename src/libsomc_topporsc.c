@@ -1,0 +1,88 @@
+// 自動產生（rsc/gen_rsc.py），請勿手動修改。
+extern const unsigned char res_MDT_0[];
+extern const unsigned char res_MDT_1[];
+extern const unsigned char res_MDT_2[];
+extern const unsigned char res_MDT_3[];
+extern const unsigned char res_MDT_4[];
+extern const unsigned char res_MDT_5[];
+extern const unsigned char res_MDT_6[];
+extern const unsigned char res_MDT_7[];
+extern const unsigned char res_MDT_8[];
+extern const unsigned char res_MDT_9[];
+extern const unsigned char res_MDT_10[];
+extern const unsigned char res_MDT_11[];
+extern const unsigned char res_MDT_12[];
+extern const unsigned char res_MDT_13[];
+extern const unsigned char res_MDT_14[];
+extern const unsigned char res_MDT_15[];
+extern const unsigned char res_MDT_16[];
+extern const unsigned char res_MDT_17[];
+extern const unsigned char res_MDT_18[];
+extern const unsigned char res_MDT_19[];
+extern const unsigned char res_MDT_20[];
+extern const unsigned char res_MDT_21[];
+extern const unsigned char res_MDT_22[];
+extern const unsigned char res_MDT_23[];
+extern const unsigned char res_MDT_24[];
+extern const unsigned char res_MDT_25[];
+extern const unsigned char res_MDT_26[];
+extern const unsigned char res_MDT_27[];
+extern const unsigned char res_MDT_28[];
+static const void *const kTable_MDT[29] = { res_MDT_0,res_MDT_1,res_MDT_2,res_MDT_3,res_MDT_4,res_MDT_5,res_MDT_6,res_MDT_7,res_MDT_8,res_MDT_9,res_MDT_10,res_MDT_11,res_MDT_12,res_MDT_13,res_MDT_14,res_MDT_15,res_MDT_16,res_MDT_17,res_MDT_18,res_MDT_19,res_MDT_20,res_MDT_21,res_MDT_22,res_MDT_23,res_MDT_24,res_MDT_25,res_MDT_26,res_MDT_27,res_MDT_28 };
+__attribute__((visibility("default"))) const void *holder_MDT(int index) asm("_ZN20ShaderCodeHolder_MDT13getShaderDataEi");
+const void *holder_MDT(int index) { return (index >= 0 && index < 29) ? kTable_MDT[index] : (const void *)0; }
+extern const unsigned char res_CCPL_0[];
+extern const unsigned char res_CCPL_1[];
+extern const unsigned char res_CCPL_2[];
+extern const unsigned char res_CCPL_3[];
+extern const unsigned char res_CCPL_4[];
+extern const unsigned char res_CCPL_5[];
+extern const unsigned char res_CCPL_6[];
+extern const unsigned char res_CCPL_7[];
+extern const unsigned char res_CCPL_8[];
+extern const unsigned char res_CCPL_9[];
+extern const unsigned char res_CCPL_10[];
+extern const unsigned char res_CCPL_11[];
+extern const unsigned char res_CCPL_12[];
+extern const unsigned char res_CCPL_13[];
+extern const unsigned char res_CCPL_14[];
+extern const unsigned char res_CCPL_15[];
+extern const unsigned char res_CCPL_16[];
+extern const unsigned char res_CCPL_17[];
+extern const unsigned char res_CCPL_18[];
+extern const unsigned char res_CCPL_19[];
+extern const unsigned char res_CCPL_20[];
+extern const unsigned char res_CCPL_21[];
+extern const unsigned char res_CCPL_22[];
+extern const unsigned char res_CCPL_23[];
+extern const unsigned char res_CCPL_24[];
+extern const unsigned char res_CCPL_25[];
+extern const unsigned char res_CCPL_26[];
+extern const unsigned char res_CCPL_27[];
+extern const unsigned char res_CCPL_28[];
+extern const unsigned char res_CCPL_29[];
+extern const unsigned char res_CCPL_30[];
+extern const unsigned char res_CCPL_31[];
+static const void *const kTable_CCPL[32] = { res_CCPL_0,res_CCPL_1,res_CCPL_2,res_CCPL_3,res_CCPL_4,res_CCPL_5,res_CCPL_6,res_CCPL_7,res_CCPL_8,res_CCPL_9,res_CCPL_10,res_CCPL_11,res_CCPL_12,res_CCPL_13,res_CCPL_14,res_CCPL_15,res_CCPL_16,res_CCPL_17,res_CCPL_18,res_CCPL_19,res_CCPL_20,res_CCPL_21,res_CCPL_22,res_CCPL_23,res_CCPL_24,res_CCPL_25,res_CCPL_26,res_CCPL_27,res_CCPL_28,res_CCPL_29,res_CCPL_30,res_CCPL_31 };
+__attribute__((visibility("default"))) const void *holder_CCPL(int index) asm("_ZN21ShaderCodeHolder_CCPL13getShaderDataEi");
+const void *holder_CCPL(int index) { return (index >= 0 && index < 32) ? kTable_CCPL[index] : (const void *)0; }
+extern const unsigned char res_YYPL_0[];
+extern const unsigned char res_YYPL_1[];
+extern const unsigned char res_YYPL_2[];
+extern const unsigned char res_YYPL_3[];
+extern const unsigned char res_YYPL_4[];
+extern const unsigned char res_YYPL_5[];
+extern const unsigned char res_YYPL_6[];
+extern const unsigned char res_YYPL_7[];
+static const void *const kTable_YYPL[8] = { res_YYPL_0,res_YYPL_1,res_YYPL_2,res_YYPL_3,res_YYPL_4,res_YYPL_5,res_YYPL_6,res_YYPL_7 };
+__attribute__((visibility("default"))) const void *holder_YYPL(int index) asm("_ZN21ShaderCodeHolder_YYPL13getShaderDataEi");
+const void *holder_YYPL(int index) { return (index >= 0 && index < 8) ? kTable_YYPL[index] : (const void *)0; }
+__attribute__((visibility("default"))) const void *shaderdata(int tag, int index) asm("_ZN5toppo13getShaderDataEii");
+const void *shaderdata(int tag, int index) {
+    if (tag == 0x4d4454) return holder_MDT(index);
+    if (tag == 0x4343504c) return holder_CCPL(index);
+    if (tag == 0x5959504c) return holder_YYPL(index);
+    return (const void *)0;
+}
+__attribute__((visibility("default"))) const void *kerneldata(int tag, int index) asm("_ZN5toppo13getKernelDataEii");
+const void *kerneldata(int tag, int index) { return (const void *)0; }
